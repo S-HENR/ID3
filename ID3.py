@@ -67,7 +67,7 @@ def get_subtable(df, node,value):
 
 def buildTree(df,tree=None): 
     result_attr = df.keys()[-1]
-    print(result_attr)
+
     #Here we build our decision tree
 
     #Get attribute with maximum information gain
