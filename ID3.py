@@ -1,38 +1,21 @@
-import pprint
 import numpy as np
 import pandas as pd
 eps = np.finfo(float).eps
 from numpy import log2 as log
+import csv_handler as db
 
-
-outlook = 'overcast,overcast,overcast,overcast,rainy,rainy,rainy,rainy,rainy,sunny,sunny,sunny,sunny,sunny'.split(',')
-temp = 'hot,cool,mild,hot,mild,cool,cool,mild,mild,hot,hot,mild,cool,mild'.split(',')
-humidity = 'high,normal,high,normal,high,normal,normal,normal,high,high,high,high,normal,normal'.split(',')
-windy = 'FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,TRUE,FALSE,TRUE,FALSE,FALSE,TRUE'.split(',')
-play = 'yes,yes,yes,yes,yes,yes,no,yes,no,no,no,no,yes,yes'.split(',')
-
-
-dataset ={'outlook':outlook,'temp':temp,'humidity':humidity,'windy':windy,'play':play}
-df = pd.DataFrame(dataset,columns=['outlook','temp','humidity','windy','play'])
-
-##1. claculate entropy o the whole dataset
-
-entropy_node = 0  #Initialize Entropy
-values = df.play.unique()  #Unique objects - 'Yes', 'No'
-for value in values:
-    fraction = df.play.value_counts()[value]/len(df.play)  
-    entropy_node += -fraction*np.log2(fraction)
 
 def ent(df,attribute):
-    target_variables = df.play.unique()  #This gives all 'Yes' and 'No'
-    variables = df[attribute].unique()    #This gives different features in that attribute (like 'Sweet')
+    # Calculates the entropy of the whole dataset
 
+    target_variables = df["result"].unique() 
+    variables = df[attribute].unique()
 
     entropy_attribute = 0
     for variable in variables:
         entropy_each_feature = 0
         for target_variable in target_variables:
-            num = len(df[attribute][df[attribute]==variable][df.play ==target_variable]) #numerator
+            num = len(df[attribute][df[attribute]==variable][df["result"] ==target_variable]) #numerator
             den = len(df[attribute][df[attribute]==variable])  #denominator
             fraction = num/(den+eps)  #pi
             entropy_each_feature += -fraction*log(fraction+eps) #This calculates entropy for one feature like 'Sweet'
@@ -41,35 +24,28 @@ def ent(df,attribute):
 
     return(abs(entropy_attribute))
 
-a_entropy = {k:ent(df,k) for k in df.keys()[:-1]}
-a_entropy
-
 def ig(e_dataset,e_attr):
     return(e_dataset-e_attr)
 
-#entropy_node = entropy of dataset
-#a_entropy[k] = entropy of k(th) attr
-IG = {k:ig(entropy_node,a_entropy[k]) for k in a_entropy}
-
 def find_entropy(df):
-    Class = df.keys()[-1]   #To make the code generic, changing target variable class name
+    result_attr = df.keys()[-1]
     entropy = 0
-    values = df[Class].unique()
+    values = df[result_attr].unique()
     for value in values:
-        fraction = df[Class].value_counts()[value]/len(df[Class])
+        fraction = df[result_attr].value_counts()[value]/len(df[result_attr])
         entropy += -fraction*np.log2(fraction)
     return entropy
-  
-  
+
 def find_entropy_attribute(df,attribute):
-  Class = df.keys()[-1]   #To make the code generic, changing target variable class name
-  target_variables = df[Class].unique()  #This gives all 'Yes' and 'No'
-  variables = df[attribute].unique()    #This gives different features in that attribute (like 'Hot','Cold' in Temperature)
+  result_attr = df.keys()[-1]  
+  
+  target_variables = df[result_attr].unique()
+  variables = df[attribute].unique()
   entropy2 = 0
   for variable in variables:
       entropy = 0
       for target_variable in target_variables:
-          num = len(df[attribute][df[attribute]==variable][df[Class] ==target_variable])
+          num = len(df[attribute][df[attribute]==variable][df[result_attr] ==target_variable])
           den = len(df[attribute][df[attribute]==variable])
           fraction = num/(den+eps)
           entropy += -fraction*log(fraction+eps)
@@ -79,10 +55,8 @@ def find_entropy_attribute(df,attribute):
 
 
 def find_winner(df):
-    Entropy_att = []
     IG = []
     for key in df.keys()[:-1]:
-#         Entropy_att.append(find_entropy_attribute(df,key))
         IG.append(find_entropy(df)-find_entropy_attribute(df,key))
     return df.keys()[:-1][np.argmax(IG)]
   
@@ -92,8 +66,8 @@ def get_subtable(df, node,value):
 
 
 def buildTree(df,tree=None): 
-    Class = df.keys()[-1]   #To make the code generic, changing target variable class name
-    
+    result_attr = df.keys()[-1]
+    print(result_attr)
     #Here we build our decision tree
 
     #Get attribute with maximum information gain
@@ -113,7 +87,7 @@ def buildTree(df,tree=None):
     for value in attValue:
         
         subtable = get_subtable(df,node,value)
-        clValue,counts = np.unique(subtable['play'],return_counts=True)                        
+        clValue,counts = np.unique(subtable['result'],return_counts=True)                        
         
         if len(counts)==1:#Checking purity of subset
             tree[node][value] = clValue[0]                                                    
@@ -122,6 +96,31 @@ def buildTree(df,tree=None):
                    
     return tree
 
+######
+def generate_decision_tree(csv_filename: str):
+    # Generate a decision tree from a provided knowledge base, csv format.
+    # Eg : csv_filename="data.csv".
+    # Function called by the CLI.
 
-res = buildTree(df)
-pprint.pprint(res)
+    df = db.read(csv_filename)
+
+    entropy_node = 0  # init entropy
+    values = df["result"].unique()  # list of unique final values => values of "result" =>Only True or False
+    
+
+    for value in values:
+        fraction = df["result"].value_counts()[value]/len(df["result"])  
+        entropy_node += -fraction*np.log2(fraction)
+
+    entropy_generator = {k:ent(df,k) for k in df.keys()[:-1]}
+    entropy_generator
+
+    res = buildTree(df)
+    
+    return res
+    
+
+# Debug
+if __name__ == "__main__":
+    r = generate_decision_tree("data.csv")
+    print(r)
