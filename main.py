@@ -1,27 +1,9 @@
 import ID3
 import pandas as pd
 from PyInquirer import prompt
+import csv_handler
 
-def main():
-
-    fileName = 'data.csv'
-    answers = dict() # to store the answers of the user 
-    tree = ID3.generate_decision_tree(csv_filename=fileName) # Generate the ID3 Tree
-
-    df = pd.read_csv(fileName) # To know columns of the dataset
-    for x in df.columns : answers[x] = ''
-
-    right_prediction = go_through_tree_dict(tree,df,answers)
-    
-    if(not right_prediction):
-        # Ask non asked questions
-        for key,value in answers.items():
-            if (value == ''):
-                answer = ask_question(key,df) # With key we define the question we want to ask
-                answers[key] = answer
-    
-    print(answers) # Print the final obtained data
-                
+              
 
 def ask_question(key,df):
     # In this method we use the key to create the question and 
@@ -56,7 +38,9 @@ def go_through_tree_dict(tree,df,answers):
             predicted = tree
             leaf = True
 
-            print('Predicted value for ' + df.columns[-1] + ' is ' + str(predicted))
+            predicted_str = {True: "yes", False: "no"}
+
+            print('Predicted value for ' + df.columns[-1] + ' is ' + predicted_str[predicted])
     
             answer = ask_question(df.columns[-1], df)
             answers[df.columns[-1]] = answer
@@ -65,6 +49,31 @@ def go_through_tree_dict(tree,df,answers):
     else : answer_value = False 
 
     return(answer_value == predicted)
+
+def main():
+
+    fileName = 'db/data.csv'
+    answers = dict() # to store the answers of the user 
+    tree = ID3.generate_decision_tree(csv_filename=fileName) # Generate the ID3 Tree
+
+    df = pd.read_csv(fileName) # To know columns of the dataset
+    for x in df.columns : answers[x] = ''
+
+    right_prediction = go_through_tree_dict(tree,df,answers)
+    
+    if(not right_prediction):
+        # Ask non asked questions
+        for key,value in answers.items():
+            if (value == ''):
+                answer = ask_question(key,df) # With key we define the question we want to ask
+                answers[key] = answer
+    
+    # print(answers) # Print the final obtained data    
+    
+    # If the prediction wasn't right, we have to write new knowledge in the db
+    if(not right_prediction):
+        new_data = pd.DataFrame(answers, index=[0])
+        csv_handler.update_db(new_data_df=new_data,csv_filename=fileName)
 
 if __name__ == '__main__': 
     main()
