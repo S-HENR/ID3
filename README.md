@@ -11,6 +11,10 @@ The CLI will ask questions to the user, until a point when it announces which re
 If the predicted result is confirmed by the user, then it's all fine.
 If not, then the CLI asks the user to enter some more additional data. The knowledge 
 
+## This can be used through CLI but it wil also be deployed as a webApp on heroku
+
+Here you can find the database model that the webApp uses : [(link)](DB_MODEL.md)
+
 ### ID3 algorithm
 
 To build our tree we follow a few key steps :
@@ -36,7 +40,7 @@ To build our tree we follow a few key steps :
 |`build_tree`|`df`: dataset explored | Build the tree stocked in a variable `tree[][]`|
 |`generate_decision_tree`|`csv_filename` : Name of the .csv which provide data| General function to read the csv, calculate the entropy and build the tree to return the final tree|
 
-## Run the thing
+## Run the thing in CLI mode
 
 - `git clone` the project (or dowload and `unzip` the archive)
 - `cd` inside of it
@@ -61,12 +65,12 @@ You'll need `pipenv`, unless you're ready to install the dependencies by hand.
 
 ### ... or with docker
 
-- `docker build -t id3py .`
+- `docker build -f Dockerfile.cli -t id3py .`
 
-If you're on Linux/MacOS/Unix :
+Then, if you're using **Linux/MacOS/Unix** :
 - `docker run -v $(pwd)/db:/app/db -it id3py`
 
-If you're on Windows :
+Or if you're using **Windows** :
 
 - `docker run -v ${PWD}/db:/app/db -it id3py`
 
