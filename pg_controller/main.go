@@ -25,6 +25,8 @@ func main() {
 	// 	Result:       true,
 	// }
 
+	log.Println("PG controller has started !")
+
 	r := mux.NewRouter()
 	r.HandleFunc("/football", controller.GETHandler).Methods("GET")
 	r.HandleFunc("/football", controller.POSTHandler).Methods("POST")
