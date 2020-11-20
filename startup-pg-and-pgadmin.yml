@@ -1,0 +1,41 @@
+# docker-compose -f startup-pg-and-pgadmin.yml up
+
+version: "3.8"
+
+services:
+
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    
+    environment: 
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: football
+    volumes: 
+      - postgredata:/pgdata
+    networks:
+     - postgrenetwork
+
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - 8080:80
+      - 443:443
+    environment: 
+      PGADMIN_DEFAULT_EMAIL: admin@linux.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    networks:
+      - postgrenetwork
+
+networks:
+  postgrenetwork:
+
+volumes:
+  postgredata:
+
+# Then go to localhost:8080/login
+# Configure pgAdmin
+# Add server
+# Hostname is postgres and db is admin
