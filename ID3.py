@@ -3,6 +3,41 @@ import pandas as pd
 eps = np.finfo(float).eps
 from numpy import log2 as log
 import csv_handler as db
+import flask
+from flask import request, jsonify
+import json
+
+app = flask.Flask(__name__)
+app.config['DEBUG'] = True
+tree = {}
+
+
+@app.route('/', methods=['GET'])
+def home():
+    return '''<h1>ID3 API</h1>
+<p>A REST API that work with ID3 Algorithm</p>'''
+
+
+@app.route('/api/rest/get_tree', methods=['GET'])
+def api_get_tree():
+    return generate_response(tree)
+
+
+@app.route('/api/rest/post_tree', methods=['GET'])
+def api_post_tree():
+    # Check if a file name was provided as part of the URL.
+    # If no name is provided, display an error in the browser.
+    if 'file' in request.args:
+        file = str(request.args['file'])
+    else:
+        return "Error: No file name field provided. Please specify a file name."
+
+    new_tree = generate_decision_tree(file)
+
+    return generate_response(new_tree)
+
+def generate_response(id3_tree):    
+    return jsonify(id3_tree) # ERROR has to be STRING not BOOLEAN values at RESULT
 
 
 def calc_df_entropy(df,attribute):
@@ -115,7 +150,6 @@ def generate_decision_tree(csv_filename: str):
         entropy_node += -fraction*np.log2(fraction)
 
     entropy_generator = {k:calc_df_entropy(df,k) for k in df.keys()[:-1]}
-    entropy_generator
 
     res = build_tree(df)
     
@@ -124,5 +158,5 @@ def generate_decision_tree(csv_filename: str):
 
 # Debug
 if __name__ == "__main__":
-    r = generate_decision_tree("db/data.csv")
-    print(r)
+    tree = generate_decision_tree('db/data.csv') # Default tree for the API
+    app.run()

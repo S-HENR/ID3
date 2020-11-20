@@ -3,7 +3,7 @@ import pandas as pd
 from PyInquirer import prompt
 import csv_handler
 
-              
+
 
 def ask_question(key,df):
     # In this method we use the key to create the question and 
@@ -74,6 +74,6 @@ def main():
     if(not right_prediction):
         new_data = pd.DataFrame(answers, index=[0])
         csv_handler.update_db(new_data_df=new_data,csv_filename=fileName)
-
+	
 if __name__ == '__main__': 
     main()
