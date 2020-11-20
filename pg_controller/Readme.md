@@ -19,7 +19,7 @@ It will run on port `5000`.
 
 ##### `POST`
 
-Allows to add a new case to the database.
+**Desc:** Allows to add a new case to the database.
 
 **Request body:**
 
@@ -61,6 +61,6 @@ Eg. of a **valid request body** :
 
 ##### `GET`
 
-Allows to retrieve all the data from the table of cases.
+**Desc:** Allows to retrieve all the data from the table of cases.
 
 *Under development*
