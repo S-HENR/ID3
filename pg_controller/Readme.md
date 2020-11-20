@@ -63,4 +63,4 @@ Eg. of a **valid request body** :
 
 **Desc:** Allows to retrieve all the data from the table of cases.
 
-*Under development*
+**No parameter to pass**

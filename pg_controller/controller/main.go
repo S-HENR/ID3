@@ -11,6 +11,16 @@ import (
 // GETHandler is the handler for GET requests
 func GETHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
+	res, err := service.RetrieveAllCases()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(res)
+
 }
 
 // POSTHandler is the handler for POST requests

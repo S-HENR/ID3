@@ -2,6 +2,7 @@ package dbinteract
 
 import (
 	"os"
+	"pg-controller/models"
 
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
@@ -12,7 +13,7 @@ type PostgresDB struct {
 	db *pg.DB
 }
 
-// PostgresDBMethods is an interface handler to define the methods which will allow you to interact with the postgres instance
+// PostgresDBMethods is an interface handler to define GENERICS methods which will allow you to interact with the postgres instance
 type PostgresDBMethods interface {
 	CreateTable(models []interface{}) error
 	InsertItem(item interface{}) error
@@ -58,4 +59,13 @@ func (p *PostgresDB) CreateTable(models []interface{}) error {
 func (p *PostgresDB) InsertItem(item interface{}) error {
 	_, err := p.db.Model(item).Insert()
 	return err
+}
+
+// ReadAllItemsFootball reads all items of the table PlayFootballID3 of db football.
+func (p *PostgresDB) ReadAllItemsFootball(target []models.PlayFootballID3) ([]models.PlayFootballID3, error) {
+	if err := p.db.Model(&target).Select(); err != nil {
+		return nil, err
+	}
+
+	return target, nil
 }

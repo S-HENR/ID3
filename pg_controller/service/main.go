@@ -27,3 +27,20 @@ func SaveNewCase(newCase *models.PlayFootballID3) error {
 
 	return nil
 }
+
+// RetrieveAllCases from the football db, the targeted table
+func RetrieveAllCases() ([]models.PlayFootballID3, error) {
+	footballDB, err := NewConnection("football")
+	if err != nil {
+		return nil, err
+	}
+
+	var items []models.PlayFootballID3
+
+	items, err = footballDB.ReadAllItemsFootball(items)
+	if err != nil {
+		return nil, err
+	}
+
+	return items, nil
+}
