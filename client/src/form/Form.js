@@ -1,6 +1,7 @@
 import React from 'react';
 import './Form.css';
 import { SURVEY } from '../services/surveyService';
+import { QUESTIONS } from './questions';
 
 export default class WholeForm extends React.Component {
   
@@ -64,6 +65,12 @@ export default class WholeForm extends React.Component {
 
   }
 
+  getQuestion(idQuestion) {
+    let question
+    QUESTIONS.find(q => {if(q.id === idQuestion) question = q.question})
+    return question
+  }
+
   askOtherQuestions() {
     console.log("ok let's go")
   }
@@ -73,8 +80,8 @@ export default class WholeForm extends React.Component {
     if(!this.isFinalQuestion) {
       return (
         <form>
-          <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300 capitalize">
-            {this.currentQuestion.question}
+          <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
+            {this.getQuestion(this.currentQuestion.question)}
           </div>
           <div className="ml-10">
             {this.currentQuestion.answers.map(answer => 
