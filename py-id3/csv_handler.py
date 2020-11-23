@@ -9,9 +9,9 @@ def read(csv_filename: str):
     df = pd.read_csv(csv_filename)
     df["result"].replace({"yes": True, "no": False}, inplace=True) # This will be easier to handle for the CLI
 
-    print("__ACTUAL KNOWLEDGE BASE__")
-    print(df)
-    print("___________")
+    #print("__ACTUAL KNOWLEDGE BASE__")
+    #print(df)
+    #print("___________")
     return df
 
 def update_db(new_data_df: pd.DataFrame,csv_filename: str):

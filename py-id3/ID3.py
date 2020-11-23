@@ -4,41 +4,37 @@ eps = np.finfo(float).eps
 from numpy import log2 as log
 import csv_handler as db
 import flask
-from flask import request, jsonify
-import json
+from flask import request, jsonify,json
 
 app = flask.Flask(__name__)
 app.config['DEBUG'] = True
+default_database = 'db/data.csv'
 tree = {}
-
 
 @app.route('/', methods=['GET'])
 def home():
     return '''<h1>ID3 API</h1>
-<p>A REST API that work with ID3 Algorithm</p>'''
+<p>A REST API that work with ID3 Algorithm</p>
+<h2> DEFAULT TREE </h2>
+<p> {} </p> 
+<h2> DEFAULT DATA </h2> 
+<p> {} </p>'''.format(tree, db.read(default_database).to_html())  
 
-
-@app.route('/api/rest/get_tree', methods=['GET'])
-def api_get_tree():
-    return generate_response(tree)
-
-
-@app.route('/api/rest/post_tree', methods=['GET'])
-def api_post_tree():
-    # Check if a file name was provided as part of the URL.
-    # If no name is provided, display an error in the browser.
-    if 'file' in request.args:
-        file = str(request.args['file'])
-    else:
-        return "Error: No file name field provided. Please specify a file name."
-
-    new_tree = generate_decision_tree(file)
-
-    return generate_response(new_tree)
-
-def generate_response(id3_tree):    
-    return jsonify(id3_tree) # ERROR has to be STRING not BOOLEAN values at RESULT
-
+@app.route('/rest/api/', methods=['GET','POST'])
+def api():
+    if request.method == 'POST':
+        # Check if a file name was provided as part of the URL.
+        # If no name is provided, display an error in the browser.
+        if request.data:
+            content = request.get_json()
+            new_df = pd.json_normalize(content, "data")
+            print(new_df)
+            db.update_db(new_df, default_database)
+            return 'Post request submited, database updated'
+        else:
+            return 'Error: Empty input'
+    elif request.method == 'GET':
+        return jsonify(str(tree))
 
 def calc_df_entropy(df,attribute):
     # Calculates the entropy of the whole dataset
@@ -112,7 +108,6 @@ def build_tree(df,tree=None):
 
     # result_attr = df.keys()[-1]
 
-
     node = find_best_attribute(df) # Attribute with max info
     
     att_value = np.unique(df[node]) # Get the distinct values that the attribute can take
@@ -158,5 +153,18 @@ def generate_decision_tree(csv_filename: str):
 
 # Debug
 if __name__ == "__main__":
-    tree = generate_decision_tree('db/data.csv') # Default tree for the API
+    tree = generate_decision_tree(default_database) # Default tree for the API
     app.run()
+
+"""
+ API Request examples 
+ GET : http://127.0.0.1:5000/rest/api/
+
+ POST : http://127.0.0.1:5000/rest/api/
+ JSON OBJECT : 
+{ 
+    "data":
+        [{"outlook" : "overcast", "temp": "hot", "humidity": "high", "windy": "weak", "result" : "yes"}, 
+        {"outlook" : "overcast", "temp": "cool", "humidity": "normal", "windy": "strong", "result" : "yes"}]
+}  
+"""       
