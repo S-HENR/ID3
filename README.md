@@ -13,7 +13,13 @@ If not, then the CLI asks the user to enter some more additional data. The knowl
 
 ## This can be used through CLI but it wil also be deployed as a webApp
 
+[Documentation regarding the ID3 tree generation exposed through a REST API](./py-id3/Readme.md)
+
+[Documentation regarding the postgres db controller, exposed through a REST API](./pg_controller/Readme.md)
+
 Here you can find the database model that the webApp uses : [(link)](DB_MODEL.md)
+
+We're using a Postgres SQL database.
 
 ### ID3 algorithm
 

@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+
+  postgres:
+    environment: 
+      POSTGRES_USER: admin
+      POSTGRES_DB_PASSWORD_FILE: /run/secrets/postgres_password_secret
+
+  pg-controller:
+    environment:
+      PROD: "true"
+    secrets:
+      - postgres_password_secret
+    
+secrets:
+  postgres_password_secret:
+    external: true
