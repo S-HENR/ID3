@@ -23,6 +23,8 @@ def home():
         return {"canGenerate":False, "message":"couldn't connect to db"}, 400,{'Content-Type': 'application/json'}
 
     items = r.json()
+    if items is None:
+        return {"canGenerate": False, "message": "Not enough Values"},200,{'Content-Type': 'application/json'}
 
     if len(items) < 15:
         return {"canGenerate": False, "message": "Not enough Values"},200,{'Content-Type': 'application/json'}
