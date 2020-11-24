@@ -1,0 +1,11 @@
+setup:
+  addons:
+    - plan: heroku-postgresql
+      as: DATABASE
+  config:
+    POSTGRES_DB: football
+
+build:
+  docker:
+    pg-controller: pg_controller/Dockerfile
+    py-id3: py-id3/Dockerfile

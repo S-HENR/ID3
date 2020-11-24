@@ -44,6 +44,7 @@ To build our tree we follow a few key steps :
 
 - `git clone` the project (or dowload and `unzip` the archive)
 - `cd` inside of it
+- `cd py-id3`
 
 **and**
 
