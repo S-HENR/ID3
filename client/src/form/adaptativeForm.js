@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ID3, sendSurvey } from '../services/surveyService';
+import { sendSurvey, getTree } from '../services/surveyService';
 import ThanksPage from '../thanksPage';
 import { QUESTIONS } from './questions';
 
@@ -8,7 +8,9 @@ export default class AdaptativeForm extends React.Component {
   
   constructor(props) {
     super(props)
-    this.survey = ID3
+
+    let ID3Tree = getTree()
+    this.survey = ID3Tree.tree
     this.questions = QUESTIONS
     this.answeredQuestions = {
       outlook : "",
