@@ -8,26 +8,35 @@ import { getTree } from '../services/surveyService';
 
 export default class WholeForm extends React.Component {
 
-  formToUse() {
-    getTree().then(res => {
-      return res.canGenerate
-    })
+  form = <this.Loading/>
+
+  async formToUse() {
+    let res = await getTree()
+    if(!res.canGenerate) {
+      this.form = <InitialeForm/>
+    }
+    else {
+      this.form = `
+        <AdaptativeForm/>
+      `
+    }
+
+    this.forceUpdate()
+
+  }
+
+  Loading() {
+    <div className="mt-20">
+      Loading
+      <img width="25" height="25" src="../../assets/waiting.svg" className="ml-4 animate-spin my-auto"></img>
+    </div>
   }
 
   render() {
-
-    let form
-
-    if(!this.formToUse()) {
-      form = <InitialeForm/>
-    }
-    else {
-      form = <AdaptativeForm/>
-    }
-
+    this.formToUse()
     return(
       <div className="w-full">
-        {form}
+        {this.form}
       </div>
     );
   }

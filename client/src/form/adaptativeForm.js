@@ -8,7 +8,6 @@ export default class AdaptativeForm extends React.Component {
   
   constructor(props) {
     super(props)
-
     let ID3Tree = getTree()
     this.survey = ID3Tree.tree
     this.questions = QUESTIONS
@@ -166,132 +165,152 @@ export default class AdaptativeForm extends React.Component {
         if(!this.isFinalQuestion) {
           if(isInput) {
             return (
-              <form className="ml-10">
-                <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
-                  {this.getQuestion(this.currentQuestion.question)}
+              <div>
+                <div className="uppercase tracking-wide text-2xl text-gray-700 mb-4">
+                  Do you want to play football ?
                 </div>
-                <div className="ml-10">
-                  <input 
-                    className="shadow appearance-none border rounded py-2 px-3 text-grey-darker border border-yellow-300"
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                  />
-                </div>
-                <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleIntermediateSubmit}>
-                  <span className="mr-2">Next</span>
-                  <img width="18" height="18" src="../../assets/right-arrow.svg" className="ml-4 animate-bounce my-auto"></img>
-                </button>
-              </form>
+                <form className="ml-10">
+                  <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
+                    {this.getQuestion(this.currentQuestion.question)}
+                  </div>
+                  <div className="ml-10">
+                    <input 
+                      className="shadow appearance-none border rounded py-2 px-3 text-grey-darker border border-yellow-300"
+                      value={this.state.value}
+                      onChange={this.handleChange}
+                    />
+                  </div>
+                  <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleIntermediateSubmit}>
+                    <span className="mr-2">Next</span>
+                    <img width="18" height="18" src="../../assets/right-arrow.svg" className="ml-4 animate-bounce my-auto"></img>
+                  </button>
+                </form>
+              </div>
             );
           }
           else {
             return (
-              <form className="ml-10">
-                <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
-                  {this.getQuestion(this.currentQuestion.question)}
+              <div>
+                <div className="uppercase tracking-wide text-2xl text-gray-700 mb-4">
+                  Do you want to play football ?
                 </div>
-                <div className="ml-10">
-                  {this.currentQuestion.answers.map(answer => 
-                    <div className="mb-2">
-                      <input 
-                        id={answer}
-                        type="radio" 
-                        value={answer}
-                        onChange={this.handleChange}
-                        checked={this.state.value === answer}
-                      />
-                      <label for={answer} className="ml-2 capitalize text-lg text-c2 text-gray-700">{answer}</label>
-                    </div>
-                  )}
-                </div>
-                <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleIntermediateSubmit}>
-                  <span className="mr-2">Next</span>
-                  <img width="18" height="18" src="../../assets/right-arrow.svg" className="ml-4 animate-bounce my-auto"></img>
-                </button>
-              </form>
+                <form className="ml-10">
+                  <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
+                    {this.getQuestion(this.currentQuestion.question)}
+                  </div>
+                  <div className="ml-10">
+                    {this.currentQuestion.answers.map(answer => 
+                      <div className="mb-2">
+                        <input 
+                          id={answer}
+                          type="radio" 
+                          value={answer}
+                          onChange={this.handleChange}
+                          checked={this.state.value === answer}
+                        />
+                        <label for={answer} className="ml-2 capitalize text-lg text-c2 text-gray-700">{answer}</label>
+                      </div>
+                    )}
+                  </div>
+                  <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleIntermediateSubmit}>
+                    <span className="mr-2">Next</span>
+                    <img width="18" height="18" src="../../assets/right-arrow.svg" className="ml-4 animate-bounce my-auto"></img>
+                  </button>
+                </form>
+              </div>
             );
           }
         }
         else {
           return (
-            <form> 
-              <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300 capitalize">
-                Do you want to play ?
-              </div>
-              <div className="ml-10">
-                  <div className="mb-2">
-                    <input 
-                      id="yes"
-                      type="radio" 
-                      value="yes"
-                      onChange={this.handleChange}
-                      checked={this.state.value === "yes"}
-                    />
-                    <label for="yes" className="ml-2 capitalize text-lg text-c2 text-gray-700">Yes, Totally !</label>
-                  </div>
-                  <div className="mb-2">
-                    <input 
-                      id="no"
-                      type="radio" 
-                      value="no"
-                      onChange={this.handleChange}
-                      checked={this.state.value === "no"}
-                    />
-                    <label for="no" className="ml-2 capitalize text-lg text-c2 text-gray-700">Nah, Maybe another time !</label>
-                  </div>
-              </div>
-              <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleFinalSubmit}>
-                <span className="mr-2">Finish</span>
-                <img width="18" height="18" src="../../assets/right-arrow.svg" className="ml-4 animate-bounce my-auto"></img>
-              </button>
-            </form>
+            <div>
+                <div className="uppercase tracking-wide text-2xl text-gray-700 mb-4">
+                  Do you want to play football ?
+                </div>
+              <form> 
+                <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300 capitalize">
+                  Do you want to play ?
+                </div>
+                <div className="ml-10">
+                    <div className="mb-2">
+                      <input 
+                        id="yes"
+                        type="radio" 
+                        value="yes"
+                        onChange={this.handleChange}
+                        checked={this.state.value === "yes"}
+                      />
+                      <label for="yes" className="ml-2 capitalize text-lg text-c2 text-gray-700">Yes, Totally !</label>
+                    </div>
+                    <div className="mb-2">
+                      <input 
+                        id="no"
+                        type="radio" 
+                        value="no"
+                        onChange={this.handleChange}
+                        checked={this.state.value === "no"}
+                      />
+                      <label for="no" className="ml-2 capitalize text-lg text-c2 text-gray-700">Nah, Maybe another time !</label>
+                    </div>
+                </div>
+                <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleFinalSubmit}>
+                  <span className="mr-2">Finish</span>
+                  <img width="18" height="18" src="../../assets/right-arrow.svg" className="ml-4 animate-bounce my-auto"></img>
+                </button>
+              </form>
+            </div>
           );
         }
       }
     }
     else {
       return(
-        <form>
-          {this.remainingQuestions.map(q => 
-            <div className="ml-10">
-              <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
-                {q.question}
+        <div>
+          <div className="uppercase tracking-wide text-2xl text-gray-700 mb-4">
+            Do you want to play football ?
+          </div>
+          <form>
+            {this.remainingQuestions.map(q => 
+              <div className="ml-10">
+                <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
+                  {q.question}
+                </div>
+                {q.answers[0] !== 'open' && 
+                  <div className="ml-10">
+                    {q.answers.map(answer => 
+                      <div className="mb-2">
+                        <input 
+                          id={`${q.id}-${answer}`}
+                          type="radio" 
+                          value={answer}
+                          name={q.id}
+                          onChange={this.handleChangeCompleting}
+                          checked={this.state[q.id] === answer}
+                        />
+                        <label htmlFor={`${q.id}-${answer}`} className="ml-2 capitalize text-lg text-c2 text-gray-700">{answer}</label>
+                      </div>
+                    )}
+                  </div>
+                }
+                {q.answers[0] === 'open' && 
+                  <div className="ml-10">
+                    <input 
+                      className="shadow appearance-none rounded py-2 px-3 text-grey-darker border border-yellow-300"
+                      value={this.state[q.id]}
+                      name={q.id}
+                      onChange={this.handleChangeCompleting}
+                    />
+                  </div>
+                }
               </div>
-              {q.answers[0] !== 'open' && 
-                <div className="ml-10">
-                  {q.answers.map(answer => 
-                    <div className="mb-2">
-                      <input 
-                        id={`${q.id}-${answer}`}
-                        type="radio" 
-                        value={answer}
-                        name={q.id}
-                        onChange={this.handleChangeCompleting}
-                        checked={this.state[q.id] === answer}
-                      />
-                      <label htmlFor={`${q.id}-${answer}`} className="ml-2 capitalize text-lg text-c2 text-gray-700">{answer}</label>
-                    </div>
-                  )}
-                </div>
-              }
-              {q.answers[0] === 'open' && 
-                <div className="ml-10">
-                  <input 
-                    className="shadow appearance-none rounded py-2 px-3 text-grey-darker border border-yellow-300"
-                    value={this.state[q.id]}
-                    name={q.id}
-                    onChange={this.handleChangeCompleting}
-                  />
-                </div>
-              }
-            </div>
-          )}
-          <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleCompletingSubmit}>
-            <span className="mr-2">Submit</span>
-            {!this.isLoading && <img width="18" height="18" src="../../assets/right-arrow.svg" className="ml-4 animate-bounce my-auto"></img>}
-            {this.isLoading && <img width="18" height="18" src="../../assets/waiting.svg" className="ml-4 animate-spin my-auto"></img>}
-          </button>
-        </form>
+            )}
+            <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleCompletingSubmit}>
+              <span className="mr-2">Submit</span>
+              {!this.isLoading && <img width="18" height="18" src="../../assets/right-arrow.svg" className="ml-4 animate-bounce my-auto"></img>}
+              {this.isLoading && <img width="18" height="18" src="../../assets/waiting.svg" className="ml-4 animate-spin my-auto"></img>}
+            </button>
+          </form>
+        </div>
       );
     }
 
