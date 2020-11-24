@@ -64,7 +64,7 @@ export default class InitialeForm extends React.Component {
     return (
       <form>
         {this.questions.map(q => 
-          <div className="">
+          <div className="ml-10">
             <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
               {q.question}
             </div>
@@ -97,32 +97,34 @@ export default class InitialeForm extends React.Component {
             }
           </div>
         )}
-        <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300 capitalize">
-          Do you want to play ?
-        </div>
         <div className="ml-10">
-            <div className="mb-2">
-              <input 
-                id="result-yes"
-                type="radio"
-                name="result"
-                value="yes"
-                onChange={this.handleChange}
-                checked={this.state['result'] === "yes"}
-              />
-              <label htmlFor="result-yes" className="ml-2 capitalize text-lg text-c2 text-gray-700">Yes, Totally !</label>
-            </div>
-            <div className="mb-2">
-              <input 
-                id="result-no"
-                type="radio" 
-                value="no"
-                name="result"
-                onChange={this.handleChange}
-                checked={this.state['result'] === "no"}
-              />
-              <label htmlFor="result-no" className="ml-2 capitalize text-lg text-c2 text-gray-700">Nah, Maybe another time !</label>
-            </div>
+          <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300 capitalize">
+            Do you want to play ?
+          </div>
+          <div className="ml-10">
+              <div className="mb-2">
+                <input 
+                  id="result-yes"
+                  type="radio"
+                  name="result"
+                  value="yes"
+                  onChange={this.handleChange}
+                  checked={this.state['result'] === "yes"}
+                />
+                <label htmlFor="result-yes" className="ml-2 capitalize text-lg text-c2 text-gray-700">Yes, Totally !</label>
+              </div>
+              <div className="mb-2">
+                <input 
+                  id="result-no"
+                  type="radio" 
+                  value="no"
+                  name="result"
+                  onChange={this.handleChange}
+                  checked={this.state['result'] === "no"}
+                />
+                <label htmlFor="result-no" className="ml-2 capitalize text-lg text-c2 text-gray-700">Nah, Maybe another time !</label>
+              </div>
+          </div>
         </div>
         <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleSubmit}>
           <span className="mr-2">Submit</span>
