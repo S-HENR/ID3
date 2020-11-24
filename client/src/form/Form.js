@@ -1,6 +1,7 @@
 import React from 'react';
 import './Form.css';
 import { SURVEY } from '../services/surveyService';
+import { QUESTIONS } from './questions';
 
 export default class WholeForm extends React.Component {
   
@@ -36,8 +37,10 @@ export default class WholeForm extends React.Component {
     }
       
     
-    this.state.value = ""
-    console.log(this.isFinalQuestion)
+    this.setState({
+      value: ""
+    })
+
     this.forceUpdate();
   };
 
@@ -62,6 +65,12 @@ export default class WholeForm extends React.Component {
 
   }
 
+  getQuestion(idQuestion) {
+    let question
+    QUESTIONS.find(q => {if(q.id === idQuestion) question = q.question})
+    return question
+  }
+
   askOtherQuestions() {
     console.log("ok let's go")
   }
@@ -71,44 +80,62 @@ export default class WholeForm extends React.Component {
     if(!this.isFinalQuestion) {
       return (
         <form>
-          {this.currentQuestion.question}
-          {this.currentQuestion.answers.map(answer => 
-            <div>
-              <input 
-                id={answer}
-                type="radio" 
-                value={answer}
-                onChange={this.handleChange}
-                checked={this.state.value === answer}
-              />
-              <label for={answer}>{answer}</label>
-            </div>
-          )}
-          <button onClick={this.handleIntermediateSubmit}>Next</button>
+          <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
+            {this.getQuestion(this.currentQuestion.question)}
+          </div>
+          <div className="ml-10">
+            {this.currentQuestion.answers.map(answer => 
+              <div className="mb-2">
+                <input 
+                  id={answer}
+                  type="radio" 
+                  value={answer}
+                  onChange={this.handleChange}
+                  checked={this.state.value === answer}
+                />
+                <label for={answer} className="ml-2 capitalize text-lg text-c2 text-gray-700">{answer}</label>
+              </div>
+            )}
+          </div>
+          <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleIntermediateSubmit}>
+            <span className="mr-2">Next</span>
+            <img width="18" height="18" src="../../assets/right-arrow.svg" className="ml-4 animate-bounce my-auto"></img>
+          </button>
         </form>
       );
     }
     else {
       return (
-        <form>
-          Do you want to play ?
-          <input 
-            id="yes"
-            type="radio" 
-            value="yes"
-            onChange={this.handleChange}
-            checked={this.state.value === "yes"}
-          />
-          <label for="yes">Yes</label>
-          <input 
-            id="no"
-            type="radio" 
-            value="no"
-            onChange={this.handleChange}
-            checked={this.state.value === "no"}
-          />
-          <label for="no">No</label>
-          <button onClick={this.handleFinalSubmit}>Finish</button>
+        <form> 
+          <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300 capitalize">
+            Do you want to play ?
+          </div>
+          <div className="ml-10">
+              <div className="mb-2">
+                <input 
+                  id="yes"
+                  type="radio" 
+                  value="yes"
+                  onChange={this.handleChange}
+                  checked={this.state.value === "yes"}
+                />
+                <label for="yes" className="ml-2 capitalize text-lg text-c2 text-gray-700">Yes, Totally !</label>
+              </div>
+              <div className="mb-2">
+                <input 
+                  id="no"
+                  type="radio" 
+                  value="no"
+                  onChange={this.handleChange}
+                  checked={this.state.value === "no"}
+                />
+                <label for="no" className="ml-2 capitalize text-lg text-c2 text-gray-700">Nah, Maybe another time !</label>
+              </div>
+          </div>
+          <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleFinalSubmit}>
+            <span className="mr-2">Finish</span>
+            <img width="18" height="18" src="../../assets/right-arrow.svg" className="ml-4 animate-bounce my-auto"></img>
+          </button>
         </form>
       );
     }
