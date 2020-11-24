@@ -26,13 +26,8 @@ export default class WholeForm extends React.Component {
     }
 
     return(
-      <div>
-        <div className="uppercase tracking-wide text-2xl text-gray-700 mb-4">
-          Do you want to play football ?
-        </div>
-        <div className="w-full">
-          {form}
-        </div>
+      <div className="w-full">
+        {form}
       </div>
     );
   }
