@@ -76,7 +76,7 @@ export default class AdaptativeForm extends React.Component {
   render() {
     if(!this.isFinalQuestion) {
       return (
-        <form>
+        <form className="ml-10">
           <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
             {this.getQuestion(this.currentQuestion.question)}
           </div>
