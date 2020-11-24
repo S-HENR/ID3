@@ -9,6 +9,9 @@ verify_ssl = true
 numpy = "*"
 pandas = "*"
 pyinquirer = "*"
+flask = "*"
+nujson = "*"
+requests = "*"
 
 [requires]
 python_version = "3.8"

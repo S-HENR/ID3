@@ -6,35 +6,10 @@ import csv_handler as db
 import flask
 from flask import request, jsonify,json
 
-app = flask.Flask(__name__)
-app.config['DEBUG'] = True
+import nujson as ujson
+
+
 default_database = 'db/data.csv'
-tree = {}
-
-@app.route('/', methods=['GET'])
-def home():
-    return '''<h1>ID3 API</h1>
-<p>A REST API that work with ID3 Algorithm</p>
-<h2> DEFAULT TREE </h2>
-<p> {} </p> 
-<h2> DEFAULT DATA </h2> 
-<p> {} </p>'''.format(tree, db.read(default_database).to_html())  
-
-@app.route('/rest/api/', methods=['GET','POST'])
-def api():
-    if request.method == 'POST':
-        # Check if a file name was provided as part of the URL.
-        # If no name is provided, display an error in the browser.
-        if request.data:
-            content = request.get_json()
-            new_df = pd.json_normalize(content, "data")
-            print(new_df)
-            db.update_db(new_df, default_database)
-            return 'Post request submited, database updated'
-        else:
-            return 'Error: Empty input'
-    elif request.method == 'GET':
-        return jsonify(str(tree))
 
 def calc_df_entropy(df,attribute):
     # Calculates the entropy of the whole dataset
@@ -129,12 +104,12 @@ def build_tree(df,tree=None):
     return tree
 
 
-def generate_decision_tree(csv_filename: str):
+def generate_decision_tree(csv_filename: str, df: pd.DataFrame = None):
     # Generate a decision tree from a provided knowledge base, csv format.
     # Eg : csv_filename="data.csv".
     # Function called by the CLI.
-
-    df = db.read(csv_filename)
+    if df is None:
+        df = db.read(csv_filename)
 
     entropy_node = 0  # init entropy
     values = df["result"].unique()  # list of unique final values => values of "result" =>Only True or False
@@ -154,7 +129,7 @@ def generate_decision_tree(csv_filename: str):
 # Debug
 if __name__ == "__main__":
     tree = generate_decision_tree(default_database) # Default tree for the API
-    app.run()
+    print(tree)
 
 """
  API Request examples 
