@@ -11,7 +11,7 @@ The CLI will ask questions to the user, until a point when it announces which re
 If the predicted result is confirmed by the user, then it's all fine.
 If not, then the CLI asks the user to enter some more additional data. The knowledge 
 
-## This can be used through CLI but it wil also be deployed as a webApp on heroku
+## This can be used through CLI but it wil also be deployed as a webApp
 
 Here you can find the database model that the webApp uses : [(link)](DB_MODEL.md)
 
