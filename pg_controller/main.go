@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 	"pg-controller/controller"
+	"pg-controller/dbinteract"
+	"pg-controller/models"
 
 	"github.com/gorilla/mux"
 )
@@ -33,4 +35,12 @@ func main() {
 
 	log.Fatal(http.ListenAndServe(":5000", r))
 
+}
+func init() {
+	// Definitely not the best way to do it
+	models := []interface{}{
+		(*models.PlayFootballID3)(nil),
+	}
+	db, _ := dbinteract.NewConnection("football")
+	db.CreateTable(models)
 }

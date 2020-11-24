@@ -1,0 +1,55 @@
+# THIS ISN'T SECURE !!
+
+version: '3.8'
+
+services:
+
+  pg-controller:
+    hostname: pg-controller
+    build: pg_controller/
+    environment:
+      UNSAFE_SSL_PG: "true"
+      DATABASE_URL: postgres://admin:admin@postgres:5432
+    networks: 
+      - back-end
+    ports:
+      - 5000:5000
+
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - 8080:80
+      - 443:443
+    environment: 
+      PGADMIN_DEFAULT_EMAIL: admin@linux.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    networks:
+      - back-end
+
+  postgres:
+    image: postgres
+    environment: 
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: football
+    volumes: 
+      - postgredata:/pgdata
+    networks:
+     - back-end
+
+  py-id3:
+    environment: 
+      PG_CTRL_HOST: pg-controller
+    build: py-id3/
+    networks:
+      - back-end
+    ports:
+      - 4000:4000
+    
+
+volumes:
+  postgredata:
+
+networks:
+  back-end:
+  # front-end:
