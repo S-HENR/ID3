@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+
+  pg-controller:
+    hostname: pg-controller
+    build: pg_controller/
+    environment:
+      UNSAFE_SSL_PG: "true"
+    networks: 
+      - workers
+      - db
+    ports:
+      - 5000:5000
+
+  postgres:
+    image: postgres
+    environment: 
+      POSTGRES_DB: football
+    volumes: 
+      - postgredata:/pgdata
+    networks:
+     - db
+
+  py-id3:
+    environment: 
+      PG_CTRL_HOST: pg-controller
+    build: py-id3/
+    networks:
+      - workers
+    ports:
+      - 4000:4000
+
+
+volumes:
+  postgredata:
+
+networks:
+  db:
+  workers:
+  front:
