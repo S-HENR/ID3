@@ -3,7 +3,7 @@ version: "3.8"
 services:
 
   pg-controller:
-    envrionnment:
+    environment: 
       DATABASE_URL: postgres://admin:admin@postgres:5432
 
 
