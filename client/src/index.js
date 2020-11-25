@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import './index.css';
 
-import Form from './form/form';
+import WholeForm from './form/form';
 
 import reportWebVitals from './reportWebVitals';
 
@@ -44,7 +44,7 @@ function FormPage() {
           <span className="ml-2">Return home</span>
         </button>
       </div>
-      <Form/>
+      <WholeForm/>
     </div>
   )
 }

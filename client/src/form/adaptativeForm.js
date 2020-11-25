@@ -8,8 +8,7 @@ export default class AdaptativeForm extends React.Component {
   
   constructor(props) {
     super(props)
-    let ID3Tree = getTree()
-    this.survey = ID3Tree.tree
+    this.survey = props.tree
     this.questions = QUESTIONS
     this.answeredQuestions = {
       outlook : "",
@@ -64,8 +63,8 @@ export default class AdaptativeForm extends React.Component {
     this.survey = this.survey[this.state.value]
 
     this.addToAnsweredQuestions()
-
-    if(typeof(this.survey) == "string") {
+    
+    if(typeof(this.survey) === "string") {
       this.isFinalQuestion = true
       this.currentQuestion = {
         question: 'result',
@@ -130,6 +129,15 @@ export default class AdaptativeForm extends React.Component {
 
   buildQuestion() {
     const [key, value] = Object.entries(this.survey)[0]
+
+    for(var answer in value) {
+      if(value[answer] === 0) {
+        value[answer] = 'no'
+      }
+      else if(value[answer] === 1) {
+        value[answer] = 'yes'
+      }
+    }
 
     this.currentQuestion = {
       question: key,
@@ -208,7 +216,7 @@ export default class AdaptativeForm extends React.Component {
                           onChange={this.handleChange}
                           checked={this.state.value === answer}
                         />
-                        <label for={answer} className="ml-2 capitalize text-lg text-c2 text-gray-700">{answer}</label>
+                        <label htmlFor={answer} className="ml-2 capitalize text-lg text-c2 text-gray-700">{answer}</label>
                       </div>
                     )}
                   </div>
@@ -240,7 +248,7 @@ export default class AdaptativeForm extends React.Component {
                         onChange={this.handleChange}
                         checked={this.state.value === "yes"}
                       />
-                      <label for="yes" className="ml-2 capitalize text-lg text-c2 text-gray-700">Yes, Totally !</label>
+                      <label htmlFor="yes" className="ml-2 capitalize text-lg text-c2 text-gray-700">Yes, Totally !</label>
                     </div>
                     <div className="mb-2">
                       <input 
@@ -250,7 +258,7 @@ export default class AdaptativeForm extends React.Component {
                         onChange={this.handleChange}
                         checked={this.state.value === "no"}
                       />
-                      <label for="no" className="ml-2 capitalize text-lg text-c2 text-gray-700">Nah, Maybe another time !</label>
+                      <label htmlFor="no" className="ml-2 capitalize text-lg text-c2 text-gray-700">Nah, Maybe another time !</label>
                     </div>
                 </div>
                 <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleFinalSubmit}>
