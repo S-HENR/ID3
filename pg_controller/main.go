@@ -8,6 +8,7 @@ import (
 	"pg-controller/models"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -29,11 +30,16 @@ func main() {
 
 	log.Println("PG controller has started !")
 
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowCredentials: true,
+	})
+
 	r := mux.NewRouter()
 	r.HandleFunc("/football", controller.GETHandler).Methods("GET")
 	r.HandleFunc("/football", controller.POSTHandler).Methods("POST")
-
-	log.Fatal(http.ListenAndServe(":5000", r))
+	handler := c.Handler(r)
+	log.Fatal(http.ListenAndServe(":5000", handler))
 
 }
 func init() {

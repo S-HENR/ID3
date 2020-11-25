@@ -5,8 +5,10 @@ import nujson as ujson
 import requests
 import pandas as pd
 import os
+from flask_cors import CORS
 
 app = flask.Flask(__name__)
+CORS(app)
 app.config['DEBUG'] = False # Env variable needs to set this
 
 
