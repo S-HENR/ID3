@@ -4,8 +4,6 @@ import (
 	"log"
 	"net/http"
 	"pg-controller/controller"
-	"pg-controller/dbinteract"
-	"pg-controller/models"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -31,8 +29,7 @@ func main() {
 	log.Println("PG controller has started !")
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowCredentials: true,
+		AllowedOrigins: []string{"*"},
 	})
 
 	r := mux.NewRouter()
@@ -41,12 +38,4 @@ func main() {
 	handler := c.Handler(r)
 	log.Fatal(http.ListenAndServe(":5000", handler))
 
-}
-func init() {
-	// Definitely not the best way to do it
-	models := []interface{}{
-		(*models.PlayFootballID3)(nil),
-	}
-	db, _ := dbinteract.NewConnection("football")
-	db.CreateTable(models)
 }
