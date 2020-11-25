@@ -16,11 +16,9 @@ app.config['DEBUG'] = False # Env variable needs to set this
 @app.route('/', methods=['GET'])
 def home():
 
-    pg_ctrl_host = os.getenv("PG_CTRL_HOST")
-    if pg_ctrl_host == "":
-        pg_ctrl_host = "localhost"
+    
     # Returns a list of all the items in the db
-    r = requests.get('http://'+pg_ctrl_host+':5000/football')
+    r = requests.get('http://pg-controller:5000/football')
     if r.status_code != 200:
         return {"canGenerate":False, "message":"couldn't connect to db"}, 400,{'Content-Type': 'application/json'}
 
