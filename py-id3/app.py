@@ -5,15 +5,17 @@ import nujson as ujson
 import requests
 import pandas as pd
 import os
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 app = flask.Flask(__name__)
 CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['DEBUG'] = False # Env variable needs to set this
 
 
 
 @app.route('/', methods=['GET'])
+@cross_origin()
 def home():
 
     
