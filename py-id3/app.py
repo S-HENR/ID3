@@ -31,14 +31,16 @@ def home():
     if len(items) < 15:
         return {"canGenerate": False, "message": "Not enough Values"},200,{'Content-Type': 'application/json'}
 
+    df = pd.DataFrame()
     for item in items:
-        df = pd.DataFrame()
-        
         dfItem = pd.DataFrame.from_records(item, index=[0])
         df = df.append(dfItem, ignore_index=True)    
 
+    
     df.drop(columns="ID", inplace=True)
+    
     tree = ID3.generate_decision_tree("", df=df) # Default tree for the API
+    
     return  ujson.dumps({"canGenerate": True,"tree":tree}),200,{'Content-Type': 'application/json'}
 
 
