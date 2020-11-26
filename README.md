@@ -5,23 +5,31 @@ Implementation of ID3 algorithm in Python
 
 ## Description
 
-We have a CSV file which is already filled with data. We use it to generate the tree using the ID3 algorithm.
+**In the CLI mode**, we have a CSV file which is already filled with data. We use it to generate the tree using the ID3 algorithm.
 The CLI will ask questions to the user, until a point when it announces which result was predicted. The user has the ability to confirm, or not, the predicted result.
 
+**The web app** works the same, except that the data is stored in a postgres SQL database.
+
 If the predicted result is confirmed by the user, then it's all fine.
-If not, then the CLI asks the user to enter some more additional data. The knowledge 
+If not, then the CLI asks the user to enter some more additional data.
 
 ## This can be used through CLI but it wil also be deployed as a webApp
 
-[Documentation regarding the ID3 tree generation exposed through a REST API](./py-id3/Readme.md)
+It is composed of a client made with React, two microservices (`py-id3` made with Python, and `pg-controller` made with Go), as well as a Postgres SQL Database.
 
-[Documentation regarding the postgres db controller, exposed through a REST API](./pg_controller/Readme.md)
+The React client interacts with these two microservices to retrieve a decision tree (`py-id3`) and post data to the database (`pg-controller`).
+
+[Documentation regarding py-id3, the ID3 tree generator exposed as a REST API](./py-id3/Readme.md)
+
+[Documentation regarding pg-controller, the postgres db controller, exposed as a REST API](./pg_controller/Readme.md)
+
+The two microservices are exposed as REST APIs, fully open, because we prefered focusing on ID3 rather than security **for now**.
+However, the admin access to the postgres database is fully secured, by using [docker secrets](https://docs.docker.com/engine/swarm/secrets/) and [docker swarm](https://docs.docker.com/engine/swarm/).
 
 Here you can find the database model that the webApp uses : [(link)](DB_MODEL.md)
 
-We're using a Postgres SQL database.
-
 The apps runs at https://furio.team and has been deployed thanks to Docker and Docker Swarm.
+
 
 ### ID3 algorithm
 
