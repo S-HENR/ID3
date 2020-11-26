@@ -12,8 +12,8 @@ dic = {
         "day_night": ["day", "night"],
         "localisation": ["outside","inside"],
         "lights": [True, False],
-        "inj_sick": ["no","boarf","yes","uh"],
-        "transport": ["car", "bus", "bike"],
+        "inj_sick": ["no","boarf","yes","uh","covid"],
+        "transport": ["car", "bus", "bike", "train", "foot", "helicopter"],
         "result": [True, False]
     }
 
