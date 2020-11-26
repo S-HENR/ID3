@@ -13,7 +13,7 @@ dic = {
         "localisation": ["outside","inside"],
         "lights": [True, False],
         "inj_sick": ["no","boarf","yes","uh","covid"],
-        "transport": ["car", "bus", "bike", "train", "foot", "helicopter"],
+        "transport": ["car", "bus", "bike", "train", "foot", "helicopter", "subway"],
         "result": [True, False]
     }
 
