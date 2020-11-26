@@ -1,8 +1,10 @@
 package dbinteract
 
 import (
+	"io/ioutil"
 	"os"
 	"pg-controller/models"
+	"strings"
 
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
@@ -23,6 +25,8 @@ type PostgresDBMethods interface {
 // You also have to target db
 func NewConnection(targetDB string) (*PostgresDB, error) {
 
+	var pgHost string
+
 	target := targetDB
 	isUnsafe := os.Getenv("UNSAFE_SSL_PG")
 
@@ -30,7 +34,22 @@ func NewConnection(targetDB string) (*PostgresDB, error) {
 		target = target + "?sslmode=disable"
 	}
 
-	opt, err := pg.ParseURL(os.Getenv("DATABASE_URL") + "/" + target)
+	if os.Getenv("PROD") == "true" {
+
+		dat, err := ioutil.ReadFile("/run/secrets/postgres_password_secret")
+		if err != nil {
+			panic(err)
+		}
+
+		pass := string(dat)
+		pass = strings.TrimSuffix(pass, "\n")
+
+		pgHost = "postgres://admin:" + pass + "@postgres:5432"
+	} else {
+		pgHost = os.Getenv("DATABASE_URL")
+	}
+
+	opt, err := pg.ParseURL(pgHost + "/" + target)
 	if err != nil {
 		return nil, err
 	}

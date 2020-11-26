@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+
+  client:
+    image: id3_client
+    networks:
+      - front
+      - workers
+    ports:
+      - 8080:80
+    
+  pg-controller:
+    image: id3_pg-controller
+    environment:
+      PROD: "true"
+      UNSAFE_SSL_PG: "true"
+    hostname: pg-controller
+    networks:
+      - workers
+      - db
+    ports:
+      - 5000:5000
+    secrets:
+      - postgres_password_secret
+  
+  postgres:
+    hostname: postgres
+    environment:
+      POSTGRES_DB: football
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password_secret
+      POSTGRES_USER: admin
+    image: postgres
+    networks:
+     - db
+    volumes:
+      - postgredata:/pgdata:rw
+    secrets:
+      - postgres_password_secret
+
+  py-id3:
+    image: id3_py-id3
+    environment:
+      PG_CTRL_HOST: pg-controller
+    networks:
+     - workers
+    ports:
+      - 4000:4000
+
+networks:
+  front:
+    driver: overlay
+  workers:
+    driver: overlay
+  db:
+
+secrets:
+  postgres_password_secret:
+    external: true
+    name: postgres_password_secret
+
+volumes:
+  postgredata:
+
