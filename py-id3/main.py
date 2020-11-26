@@ -8,8 +8,15 @@ import csv_handler
 def ask_question(key,df):
     # In this method we use the key to create the question and 
     # the dataframe to know all the posibilities for each key 
+    
     possibilities = df.groupby(key).count().index.get_level_values(key)
+    is_bool = False
+    # Passing a list of boolean possibilities to pyinquirer doesn't work :(
+    if possibilities.inferred_type == "boolean":
+        is_bool = True
+        possibilities = possibilities.map({True: "yes", False: "no"})
 
+   
     question = {
             'type': 'list',
             'name': key,
@@ -19,6 +26,13 @@ def ask_question(key,df):
 
     answer_dict = prompt(question)
     answer = answer_dict[key]
+
+    if is_bool:
+        if answer == "yes":
+            return True
+        else:
+            return False
+
 
     return answer
 
@@ -55,9 +69,10 @@ def main():
     fileName = 'db/data.csv'
     answers = dict() # to store the answers of the user 
     tree = ID3.generate_decision_tree(csv_filename=fileName) # Generate the ID3 Tree
-
+    print("tree is :" + str(tree))
     df = pd.read_csv(fileName) # To know columns of the dataset
     for x in df.columns : answers[x] = ''
+    df["result"].replace({True: "yes", False: "no"}, inplace=True) # This will be easier to handle for the CLI
 
     right_prediction = go_through_tree_dict(tree,df,answers)
     

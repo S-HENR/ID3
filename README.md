@@ -21,6 +21,8 @@ Here you can find the database model that the webApp uses : [(link)](DB_MODEL.md
 
 We're using a Postgres SQL database.
 
+The apps runs at https://furio.team and has been deployed thanks to Docker and Docker Swarm.
+
 ### ID3 algorithm
 
 To build our tree we follow a few key steps :
