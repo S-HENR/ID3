@@ -70,14 +70,21 @@ export default class AdaptativeForm extends React.Component {
         question: 'result',
         answers: ['yes','no']
       }
+      this.setState({
+        value: ""
+      })
+    }
+    else if(this.survey === undefined) {
+      this.isSent = true
+      this.askOthersQuestions(false)
     }
     else {
       this.buildQuestion()
+      this.setState({
+        value: ""
+      })
     }  
     
-    this.setState({
-      value: ""
-    })
   };
 
   handleFinalSubmit = (e) => {
@@ -92,7 +99,7 @@ export default class AdaptativeForm extends React.Component {
     else {
       this.isSent = true
       this.forceUpdate()
-      this.askOthersQuestions()
+      this.askOthersQuestions(true)
     }
   }
 
@@ -152,11 +159,17 @@ export default class AdaptativeForm extends React.Component {
     return question
   }
 
-  askOthersQuestions() {
+  askOthersQuestions(id3IsInacurate) {
+    
     this.setState({ ...this.answeredQuestions})
     delete this.state['value']
 
     this.remainingQuestions = this.questions.filter(question => this.answeredQuestions[question.id] === '')
+
+    if(!id3IsInacurate) {
+      this.remainingQuestions.push({id: "result", question: "Do you want to play ?", answers: ['yes', 'no']})
+    }
+
     this.isCompleting = true
     this.forceUpdate()
   }
