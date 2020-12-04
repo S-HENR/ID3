@@ -49,9 +49,7 @@ services:
 
 networks:
   front:
-    driver: overlay
   workers:
-    driver: overlay
   db:
 
 secrets:
