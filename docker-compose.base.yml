@@ -4,7 +4,6 @@ services:
 
   pg-controller:
     hostname: pg-controller
-    build: pg_controller/
     environment:
       UNSAFE_SSL_PG: "true"
     networks: 
@@ -13,8 +12,15 @@ services:
     ports:
       - 5000:5000
 
+  translator:
+    hostname: translator
+    networks:
+      - workers
+    ports:
+      - 6000:6000
+    
+
   client:
-    build: client/
     networks:
      - front
      - workers
@@ -33,7 +39,6 @@ services:
   py-id3:
     environment: 
       PG_CTRL_HOST: pg-controller
-    build: py-id3/
     networks:
       - workers
     ports:

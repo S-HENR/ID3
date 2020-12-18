@@ -2,6 +2,8 @@ version: '3.8'
 
 services:
 
+# FRONT
+
   client:
     image: id3_client
     networks:
@@ -9,7 +11,9 @@ services:
       - workers
     ports:
       - 8080:80
-    
+  
+# BACK -> Workers
+
   pg-controller:
     image: id3_pg-controller
     environment:
@@ -23,7 +27,29 @@ services:
       - 5000:5000
     secrets:
       - postgres_password_secret
-  
+
+  py-id3:
+    image: id3_py-id3
+    environment:
+      PG_CTRL_HOST: pg-controller
+    networks:
+     - workers
+    ports:
+      - 4000:4000
+
+  translator:
+    image: id3_translator
+    hostname: translator
+    networks:
+      - workers
+    ports: 
+      - 6000:6000
+    secrets:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+    
+# DB
+
   postgres:
     hostname: postgres
     environment:
@@ -38,14 +64,7 @@ services:
     secrets:
       - postgres_password_secret
 
-  py-id3:
-    image: id3_py-id3
-    environment:
-      PG_CTRL_HOST: pg-controller
-    networks:
-     - workers
-    ports:
-      - 4000:4000
+  
 
 networks:
   front:
@@ -56,6 +75,13 @@ secrets:
   postgres_password_secret:
     external: true
     name: postgres_password_secret
+  AWS_ACCESS_KEY_ID:
+    external: true
+    name: AWS_ACCESS_KEY_ID
+  AWS_SECRET_ACCESS_KEY:
+    external: true
+    name: AWS_SECRET_ACCESS_KEY
+  
 
 volumes:
   postgredata:
