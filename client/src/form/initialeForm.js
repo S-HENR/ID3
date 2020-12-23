@@ -3,6 +3,7 @@ import React from 'react';
 import { QUESTIONS } from './questions';
 
 import { sendSurvey } from '../services/surveyService';
+import { getFormTranslation } from '../services/translationService';
 
 import ThanksPage from '../thanksPage';
 
@@ -10,7 +11,8 @@ export default class InitialeForm extends React.Component {
   
   constructor(props) {
     super(props)
-    this.questions = QUESTIONS
+    this.preferredLang = localStorage.getItem('preferredLang')
+    this.questions = []
     this.state = this.initialeState
   }
 
@@ -32,7 +34,21 @@ export default class InitialeForm extends React.Component {
   state
   isLoading = false
   isSent = false
+  preferredLang
 
+  componentDidMount() {
+    this.translateQuestions()
+  }
+
+  async translateQuestions() {
+    const res = await getFormTranslation({
+      targetLanguage: this.preferredLang,
+      questionsAnswers: QUESTIONS
+    })
+    this.questions = res.questionsAnswers
+    this.setState(this.initialeState)
+  }
+  
   handleChange = (e) => {
       this.setState({
         ...this.state,
