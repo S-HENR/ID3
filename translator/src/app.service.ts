@@ -15,7 +15,7 @@ export class AppService {
 
   constructor(private configService: ConfigService){}
 
-  async translateFromEn(translateFromEn: TranslateFromEnDTO): Promise<TranslateFromEnResponse>  {
+  async translate(translate: TranslateFromEnDTO): Promise<TranslateFromEnResponse>  {
 
 
     var conf = new AWSConfigCredentials(this.prod,this.configService);
@@ -28,18 +28,18 @@ export class AppService {
       });
 
     const req:TranslateTextRequest = {
-      Text: translateFromEn.text,
-      SourceLanguageCode: "en",
-      TargetLanguageCode: translateFromEn.targetLanguage
+      Text: translate.text,
+      SourceLanguageCode: translate.sourceLanguage,
+      TargetLanguageCode: translate.targetLanguage
     };
   
     
 
     const resFinal: TranslateFromEnResponse = {
-      target: translateFromEn.targetLanguage,
-      source: 'EN',
+      target: translate.targetLanguage,
+      source: translate.sourceLanguage,
       translatedText: (await cli.translateText(req)).TranslatedText,
-      originalText: translateFromEn.text
+      originalText: translate.text
     }
 
     return resFinal
@@ -51,11 +51,11 @@ export class AppService {
 
     const res = await Promise.all(req.questionsAnswers.map(async (o: QuestionAnswersForm) => {
 
-      const resQ = (await this.translateFromEn({text: o.question, targetLanguage: req.targetLanguage})).translatedText;
+      const resQ = (await this.translate({text: o.question, targetLanguage: req.targetLanguage, sourceLanguage: 'en'})).translatedText;
       await sleep(2000)
       const resA = await Promise.all(o.answers.map(async (a: string) => {
         await sleep(2000)
-        return (await this.translateFromEn({text: a, targetLanguage: req.targetLanguage})).translatedText
+        return (await this.translate({text: a, targetLanguage: req.targetLanguage, sourceLanguage: 'en'})).translatedText
       }));
       
 

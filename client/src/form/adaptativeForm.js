@@ -38,6 +38,10 @@ export default class AdaptativeForm extends React.Component {
 
   state = { value:"" }
 
+  componentDidMount() {
+    console.log("ADAPTATIVE FORM")
+  }
+
   handleChange = (e) => {
       this.setState({
         value: e.target.value
@@ -187,9 +191,9 @@ export default class AdaptativeForm extends React.Component {
           if(isInput) {
             return (
               <div>
-                <div className="uppercase tracking-wide text-2xl text-gray-700 mb-4">
+                {/* <div className="uppercase tracking-wide text-2xl text-gray-700 mb-4">
                   Do you want to play football ?
-                </div>
+                </div> */}
                 <form className="ml-10">
                   <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
                     {this.getQuestion(this.currentQuestion.question)}
@@ -212,9 +216,9 @@ export default class AdaptativeForm extends React.Component {
           else {
             return (
               <div>
-                <div className="uppercase tracking-wide text-2xl text-gray-700 mb-4">
+                {/* <div className="uppercase tracking-wide text-2xl text-gray-700 mb-4">
                   Do you want to play football ?
-                </div>
+                </div> */}
                 <form className="ml-10">
                   <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
                     {this.getQuestion(this.currentQuestion.question)}
@@ -245,9 +249,9 @@ export default class AdaptativeForm extends React.Component {
         else {
           return (
             <div>
-                <div className="uppercase tracking-wide text-2xl text-gray-700 mb-4">
+                {/* <div className="uppercase tracking-wide text-2xl text-gray-700 mb-4">
                   Do you want to play football ?
-                </div>
+                </div> */}
               <form> 
                 <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300 capitalize">
                   Do you want to play ?
@@ -287,9 +291,9 @@ export default class AdaptativeForm extends React.Component {
     else {
       return(
         <div>
-          <div className="uppercase tracking-wide text-2xl text-gray-700 mb-4">
+          {/* <div className="uppercase tracking-wide text-2xl text-gray-700 mb-4">
             Do you want to play football ?
-          </div>
+          </div> */}
           <form>
             {this.remainingQuestions.map(q => 
               <div className="ml-10">

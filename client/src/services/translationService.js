@@ -1,5 +1,5 @@
 export const getTranslation = (data) => (
-    fetch('http://localhost:4000/', {
+    fetch('http://localhost:6001/', {
       method: 'POST',
       headers: {
           Accept: 'application/json',
@@ -11,7 +11,7 @@ export const getTranslation = (data) => (
 );
 
 export const getFormTranslation = (data) => (
-    fetch('http://localhost:4000/form', {
+    fetch('http://localhost:6001/form', {
       method: 'POST',
       headers: {
           Accept: 'application/json',

@@ -5,4 +5,7 @@ export class TranslateFromEnDTO {
 
     @IsNotEmpty()
     targetLanguage: string;
+
+    @IsNotEmpty()
+    sourceLanguage: string;
 }

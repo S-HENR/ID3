@@ -3,7 +3,7 @@ import React from 'react';
 import { QUESTIONS } from './questions';
 
 import { sendSurvey } from '../services/surveyService';
-import { getFormTranslation } from '../services/translationService';
+import { getFormTranslation, getTranslation } from '../services/translationService';
 
 import ThanksPage from '../thanksPage';
 
@@ -12,11 +12,10 @@ export default class InitialeForm extends React.Component {
   constructor(props) {
     super(props)
     this.preferredLang = localStorage.getItem('preferredLang')
-    this.questions = []
-    this.state = this.initialeState
+    this.state = this.surveyResultsIdx;
   }
 
-  initialeState = {
+  surveyResultsIdx = {
     outlook : "",
     temp : "",
     humidity : "",
@@ -30,55 +29,79 @@ export default class InitialeForm extends React.Component {
     transport : "",
     result : ""
   }
-  questions
-  state
+
   isLoading = false
   isSent = false
-  preferredLang
 
   componentDidMount() {
-    this.translateQuestions()
-  }
-
-  async translateQuestions() {
-    const res = await getFormTranslation({
-      targetLanguage: this.preferredLang,
-      questionsAnswers: QUESTIONS
-    })
-    this.questions = res.questionsAnswers
-    this.setState(this.initialeState)
+    console.log("INITIAL FORM")
   }
   
   handleChange = (e) => {
+   
+
       this.setState({
         ...this.state,
         [e.target.name] : e.target.value
       })
+
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault()
-    let arr = Object.values(this.state)
-    
-    if(arr.indexOf("") > -1)
+
+    var resSurveys = this.state
+
+    if(Object.values(resSurveys).indexOf("") > -1)
       return
 
-    let answers = this.state
-    for(var key in answers) {
+    
+
+    for (const id in resSurveys) {
+      if(!isNaN(parseInt(resSurveys[id])) && id != 'result') {
+        console.log(id)
+        const q = QUESTIONS.find(e => e.id == id)
+        resSurveys[id] = q.answers[parseInt(resSurveys[id])]
+      }
+      
+    }
+
+    console.log(resSurveys)    
+  
+
+    for(var key in resSurveys) {
       if(key !== 'inj_sick' && key !== 'transport')
-        if(answers[key] === 'yes') {
-          answers[key] = true
+        if(resSurveys[key] === 'yes') {
+          resSurveys[key] = true
         }
-        else if(answers[key] === 'no') {
-          answers[key] = false
+        else if(resSurveys[key] === 'no') {
+          resSurveys[key] = false
         }
     }
+
+    const inj_sickTranslated =  await getTranslation({
+      text: resSurveys["inj_sick"],
+      targetLanguage: 'en',
+      sourceLanguage: this.preferredLang
+    })
+
+    resSurveys["inj_sick"] = inj_sickTranslated.translatedText
+    
+    const transportTranslated = await getTranslation({
+      text: resSurveys["transport"],
+      targetLanguage: 'en',
+      sourceLanguage: this.preferredLang
+    })
+
+    resSurveys["transport"] = transportTranslated.translatedText
+
+
     this.isLoading = true
     this.forceUpdate()
-    sendSurvey(answers)
+    sendSurvey(resSurveys)
       .then( () => {
         this.isLoading = false
-        this.setState({ ...this.initialeState})
+        this.setState({ ...this.surveyResultsIdx})
         this.isSent = true
         this.forceUpdate()
       })
@@ -90,33 +113,33 @@ export default class InitialeForm extends React.Component {
     if(!this.isSent) {
       return (
         <div>
-          <div className="uppercase tracking-wide text-2xl text-gray-700 mb-4">
+          {/* <div className="uppercase tracking-wide text-2xl text-gray-700 mb-4">
             Do you want to play football ?
-          </div>
+          </div> */}
           <form>
-            {this.questions.map(q => 
+            {this.props.questions.map(q => 
               <div className="ml-10">
                 <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
                   {q.question}
                 </div>
-                {q.answers[0] !== 'open' && 
+                {q.answers[0] !== ' ' && 
                   <div className="ml-10">
                     {q.answers.map(answer => 
                       <div className="mb-2">
                         <input 
                           id={`${q.id}-${answer}`}
                           type="radio" 
-                          value={answer}
+                          value={q.answers.indexOf(answer)}
                           name={q.id}
                           onChange={this.handleChange}
-                          checked={this.state[q.id] === answer}
+                          //checked={this.state[q.id] === answer}
                         />
                         <label htmlFor={`${q.id}-${answer}`} className="ml-2 capitalize text-lg text-c2 text-gray-700">{answer}</label>
                       </div>
                     )}
                   </div>
                 }
-                {q.answers[0] === 'open' && 
+                {q.answers[0] === ' ' && 
                   <div className="ml-10">
                     <input 
                       className="shadow appearance-none rounded py-2 px-3 text-grey-darker border border-yellow-300"

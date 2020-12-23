@@ -45,7 +45,7 @@ class HomePage extends React.Component {
   async translateText(lang) {
     let result = []
     if(lang !== 'en') {
-      var data = {text: "", targetLanguage: lang}
+      var data = {text: "", targetLanguage: lang, sourceLanguage: 'en'}
   
       for(let i = 0 ; i < this.text.length ; i++) {
         data.text = this.text[i]

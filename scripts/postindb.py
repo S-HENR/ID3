@@ -34,7 +34,7 @@ for i in range(30):
     if thing["day_night"] == "night" and thing["lights"] == False and thing["localisation"] == "outside":
         thing["result"] = False
 
-    x = requests.post("https://pgctrl.furio.team/football", json = thing)
+    x = requests.post("http://localhost:5000/football", json = thing)
     print(x.text)
     
 # df = pd.DataFrame.from_dict(array_of_things)

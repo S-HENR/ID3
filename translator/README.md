@@ -6,7 +6,7 @@ This can be used by the client to translate the whole form, or simply a single s
 
 # Run it
 
-It runs on port `6000`, you can manually start it with :
+It runs on port `6001`, you can manually start it with :
 
 `yarn start`
 
@@ -16,19 +16,21 @@ It runs on port `6000`, you can manually start it with :
 
 ### `POST`
 
-Allows to translate a sentence to any language, but only from English.
+Allows to translate a sentence to any language, from any language.
 #### Request
 |attribute|type|desc|
 |-|-|-|
 |text|`string`|The text you want to translate|
 |targetLanguage|`string`|The language you want to translate your sentence to (lower-case two letters country code)|
+|sourceLanguage|`string`|The source language of your text (lower-case two letters country code)|
 
 ##### Example :
 
 ```JSON
 {
   "text":"hello",
-  "targetLanguage":"fr"
+  "targetLanguage":"fr",
+  "sourceLanguage":"en"
 }
 ```
 #### Response
@@ -38,7 +40,7 @@ Allows to translate a sentence to any language, but only from English.
 ```JSON
 {
   "target":"fr",
-  "source":"EN",
+  "source":"en",
   "translatedText":"bonjour",
   "originalText":"hello"
 }

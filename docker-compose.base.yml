@@ -17,15 +17,10 @@ services:
     networks:
       - workers
     ports:
-      - 6000:6000
+      - 6001:6001
     
 
-  client:
-    networks:
-     - front
-     - workers
-    ports:
-      - 80:80
+  
 
   postgres:
     image: postgres

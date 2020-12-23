@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
-import { TranslateFromEnDTO } from './dto/translate-from-en.dto';
+import { TranslateFromEnDTO as TranslateDTO } from './dto/translate-from-en.dto';
 import {TranslateFormDTO} from './dto/translate-form.dto'
 import { TranslateFromEnResponse } from './models/TranslateFromEn.response';
 
@@ -9,8 +9,8 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Post()
-  translateFromEn(@Body() translateFromEnDTO: TranslateFromEnDTO): Promise<TranslateFromEnResponse> {
-    return this.appService.translateFromEn(translateFromEnDTO);
+  translate(@Body() translateDTO: TranslateDTO): Promise<TranslateFromEnResponse> {
+    return this.appService.translate(translateDTO);
   }
 
   @Post("/form")
