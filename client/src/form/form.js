@@ -6,29 +6,8 @@ import InitialeForm from './initialeForm';
 import AdaptativeForm from './adaptativeForm';
 import { getTree } from '../services/surveyService';
 import { getFormTranslation } from '../services/translationService';
-
-
-class Loading extends React.Component {
-  render() {
-    return(
-      <div className="flex mt-20 text-center">
-        <span>Loading</span>
-        <img width="25" height="25" src="../../assets/waiting.svg" className="ml-4 animate-spin my-auto"></img>
-      </div>
-    )
-  }
-}
-
-class Error extends React.Component {
-  render() {
-    return(
-      <div className="flex mt-20 text-center">
-        <span>{this.props.text}</span>
-      </div>
-    )
-  }
-}
-
+import Loading from '../components/loading';
+import Error from '../components/error';
 
 
 export default class WholeForm extends React.Component {
