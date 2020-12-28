@@ -40,7 +40,7 @@ export default class AdaptativeForm extends React.Component {
   text = [
     "Do you want to play ?",
     "Yes, Totally !",
-    "Nah, Maybe another time !",
+    "Nah, Maybe another time !"
   ]
   textTranslated = this.text
 
@@ -59,8 +59,16 @@ export default class AdaptativeForm extends React.Component {
   
       for(let i = 0 ; i < this.text.length ; i++) {
         data.text = this.text[i]
-        const res = await getTranslation(data)
-        result[i] = res.translatedText
+        
+        try {
+          const res = await getTranslation(data)
+          if (res.statusCode > 200) {
+            throw 'error';
+          }
+          result[i] = res.translatedText
+        } catch(err) {
+          result[i] = this.text[i]
+        }
       }
       this.textTranslated = result
     }
@@ -223,7 +231,7 @@ export default class AdaptativeForm extends React.Component {
     this.remainingQuestions = this.props.questions.filter(question => this.answeredQuestions[question.id] === '')
 
     if(!id3IsInacurate) {
-      this.remainingQuestions.push({id: "result", question: this.textTranslated[0], answers: ['yes', 'no']})
+      this.remainingQuestions.push({id: "result", question: this.textTranslated[0], answers: [this.textTranslated[1], this.textTranslated[2]]})
     }
 
     this.isCompleting = true

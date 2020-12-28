@@ -27,8 +27,15 @@ export default class ThanksPage extends React.Component {
   
       for(let i = 0 ; i < this.text.length ; i++) {
         data.text = this.text[i]
-        const res = await getTranslation(data)
-        result[i] = res.translatedText
+        try {
+          const res = await getTranslation(data)
+          if (res.statusCode > 200) {
+            throw 'error';
+          }
+          result[i] = res.translatedText
+        } catch(err) {
+          result[i] = this.text[i]
+        }
       }
       this.textTranslated = result
     }
