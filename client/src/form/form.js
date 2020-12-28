@@ -28,11 +28,11 @@ export default class WholeForm extends React.Component {
         if(!data.canGenerate) {
   
           try {
-          const survey = await this.translateSurvey()
-          if (survey.statusCode > 200) {
-            throw 'error';
-          }
-          this.form = <InitialeForm questions={survey}/>
+            const survey = await this.translateSurvey()
+            if (survey.statusCode > 200) {
+              throw 'error';
+            }
+            this.form = <InitialeForm questions={survey}/>
           } catch(err) {
             this.form = <Error text="An error has occured with the translating service, please try again later"/>
           }
@@ -40,8 +40,16 @@ export default class WholeForm extends React.Component {
          
         }
         else {
-          console.log("boi")
-          this.form = <AdaptativeForm tree={data.tree}/>
+          try {
+            const survey = await this.translateSurvey()
+            if (survey.statusCode > 200) {
+              throw 'error';
+            }
+            this.form = this.form = <AdaptativeForm tree={data.tree} questions={survey}/>
+          } catch(err) {
+            this.form = <Error text="An error has occured with the translating service, please try again later"/>
+          }
+          
         }
         this.setState({value: "loaded"})
       });

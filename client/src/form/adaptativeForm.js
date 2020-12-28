@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { sendSurvey, getTree } from '../services/surveyService';
+import { getTranslation } from '../services/translationService';
 import ThanksPage from '../thanksPage';
 import { QUESTIONS } from './questions';
 
@@ -9,7 +10,6 @@ export default class AdaptativeForm extends React.Component {
   constructor(props) {
     super(props)
     this.survey = props.tree
-    this.questions = QUESTIONS
     this.answeredQuestions = {
       outlook : "",
       temp : "",
@@ -24,6 +24,7 @@ export default class AdaptativeForm extends React.Component {
       transport : "",
       result : ""
     }
+    this.preferredLang = localStorage.getItem('preferredLang')
     this.buildQuestion()
   }
   survey
@@ -35,11 +36,37 @@ export default class AdaptativeForm extends React.Component {
   remainingQuestions
   isLoading = false
   isCompleted = false
+  preferredLang
+  text = [
+    "Do you want to play ?",
+    "Yes, Totally !",
+    "Nah, Maybe another time !",
+  ]
+  textTranslated = this.text
 
   state = { value:"" }
 
-  componentDidMount() {
+  async componentDidMount() {
     console.log("ADAPTATIVE FORM")
+    this.translateText()
+  }
+
+  async translateText() {
+    let result = []
+    let lang = this.preferredLang
+    if(lang !== 'en') {
+      var data = {text: "", targetLanguage: lang, sourceLanguage: 'en'}
+  
+      for(let i = 0 ; i < this.text.length ; i++) {
+        data.text = this.text[i]
+        const res = await getTranslation(data)
+        result[i] = res.translatedText
+      }
+      this.textTranslated = result
+    }
+    else {
+      this.textTranslated = this.text
+    }
   }
 
   handleChange = (e) => {
@@ -56,22 +83,21 @@ export default class AdaptativeForm extends React.Component {
   }
 
   addToAnsweredQuestions() {
-    this.answeredQuestions[this.currentQuestion.question] = this.state.value
+    this.answeredQuestions[this.currentQuestion.idQuestion] = this.state.value
   }
 
   handleIntermediateSubmit = (e) => {
     e.preventDefault()
     if(this.state.value === "")
       return
-
+      
     this.survey = this.survey[this.state.value]
-
     this.addToAnsweredQuestions()
     
     if(typeof(this.survey) === "string") {
       this.isFinalQuestion = true
       this.currentQuestion = {
-        question: 'result',
+        idQuestion: 'result',
         answers: ['yes','no']
       }
       this.setState({
@@ -107,27 +133,53 @@ export default class AdaptativeForm extends React.Component {
     }
   }
 
-  handleCompletingSubmit = (e) => {
+  handleCompletingSubmit = async (e) => {
     e.preventDefault()
     let arr = Object.values(this.state)
     
     if(arr.indexOf("") > -1)
       return
 
-    let answers = this.state
-    for(var key in answers) {
+    let resSurveys = this.state
+    
+    for (const id in resSurveys) {
+      if(!isNaN(parseInt(resSurveys[id])) && id != 'result') {
+        const q = QUESTIONS.find(e => e.id == id)
+        resSurveys[id] = q.answers[parseInt(resSurveys[id])]
+      }
+    }
+
+    
+    for(var key in resSurveys) {
       if(key !== 'inj_sick' && key !== 'transport')
-        if(answers[key] === 'yes') {
-          answers[key] = true
+        if(resSurveys[key] === 'yes') {
+          resSurveys[key] = true
         }
-        else if(answers[key] === 'no') {
-          answers[key] = false
+        else if(resSurveys[key] === 'no') {
+          resSurveys[key] = false
         }
     }
 
+    const inj_sickTranslated =  await getTranslation({
+      text: resSurveys["inj_sick"],
+      targetLanguage: 'en',
+      sourceLanguage: this.preferredLang
+    })
+
+    resSurveys["inj_sick"] = inj_sickTranslated.translatedText
+    
+    const transportTranslated = await getTranslation({
+      text: resSurveys["transport"],
+      targetLanguage: 'en',
+      sourceLanguage: this.preferredLang
+    })
+
+    resSurveys["transport"] = transportTranslated.translatedText
+
     this.isLoading = true
     this.forceUpdate()
-    sendSurvey(answers)
+
+    sendSurvey(resSurveys)
       .then( () => {
         this.isLoading = false
         this.setState({value: ""})
@@ -140,7 +192,7 @@ export default class AdaptativeForm extends React.Component {
 
   buildQuestion() {
     const [key, value] = Object.entries(this.survey)[0]
-
+  
     for(var answer in value) {
       if(value[answer] === 0) {
         value[answer] = 'no'
@@ -151,7 +203,7 @@ export default class AdaptativeForm extends React.Component {
     }
 
     this.currentQuestion = {
-      question: key,
+      idQuestion: key,
       answers: Object.keys(value)
     }
     this.survey = this.survey[key]
@@ -159,7 +211,7 @@ export default class AdaptativeForm extends React.Component {
 
   getQuestion(idQuestion) {
     let question
-    this.questions.find(q => {if(q.id === idQuestion) question = q.question})
+    this.props.questions.find(q => {if(q.id === idQuestion) question = q.question})
     return question
   }
 
@@ -168,10 +220,10 @@ export default class AdaptativeForm extends React.Component {
     this.setState({ ...this.answeredQuestions})
     delete this.state['value']
 
-    this.remainingQuestions = this.questions.filter(question => this.answeredQuestions[question.id] === '')
+    this.remainingQuestions = this.props.questions.filter(question => this.answeredQuestions[question.id] === '')
 
     if(!id3IsInacurate) {
-      this.remainingQuestions.push({id: "result", question: "Do you want to play ?", answers: ['yes', 'no']})
+      this.remainingQuestions.push({id: "result", question: this.textTranslated[0], answers: ['yes', 'no']})
     }
 
     this.isCompleting = true
@@ -180,9 +232,9 @@ export default class AdaptativeForm extends React.Component {
 
   render() {
     let isInput
-    this.questions.find((q)=> {
-      if(q.id === this.currentQuestion.question) {
-        isInput = q.answers[0] === 'open'
+    this.props.questions.find((q)=> {
+      if(q.id === this.currentQuestion.idQuestion) {
+        isInput = q.answers[0] === ' '
       }
     })
     if(!this.isCompleting) {
@@ -196,7 +248,7 @@ export default class AdaptativeForm extends React.Component {
                 </div> */}
                 <form className="ml-10">
                   <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
-                    {this.getQuestion(this.currentQuestion.question)}
+                    {this.getQuestion(this.currentQuestion.idQuestion)}
                   </div>
                   <div className="ml-10">
                     <input 
@@ -206,8 +258,7 @@ export default class AdaptativeForm extends React.Component {
                     />
                   </div>
                   <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleIntermediateSubmit}>
-                    <span className="mr-2">Next</span>
-                    <img width="18" height="18" src="../../assets/right-arrow.svg" className="ml-4 animate-bounce my-auto"></img>
+                    <img width="18" height="18" src="../../assets/right-arrow.svg" className="animate-bounce my-auto"></img>
                   </button>
                 </form>
               </div>
@@ -221,7 +272,7 @@ export default class AdaptativeForm extends React.Component {
                 </div> */}
                 <form className="ml-10">
                   <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
-                    {this.getQuestion(this.currentQuestion.question)}
+                    {this.getQuestion(this.currentQuestion.idQuestion)}
                   </div>
                   <div className="ml-10">
                     {this.currentQuestion.answers.map(answer => 
@@ -229,17 +280,16 @@ export default class AdaptativeForm extends React.Component {
                         <input 
                           id={answer}
                           type="radio" 
-                          value={answer}
+                          value={this.props.questions[this.currentQuestion.idQuestion].answers.indexOf(answer)}
                           onChange={this.handleChange}
-                          checked={this.state.value === answer}
+                          //checked={this.state.value === answer}
                         />
                         <label htmlFor={answer} className="ml-2 capitalize text-lg text-c2 text-gray-700">{answer}</label>
                       </div>
                     )}
                   </div>
                   <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleIntermediateSubmit}>
-                    <span className="mr-2">Next</span>
-                    <img width="18" height="18" src="../../assets/right-arrow.svg" className="ml-4 animate-bounce my-auto"></img>
+                    <img width="18" height="18" src="../../assets/right-arrow.svg" className="animate-bounce my-auto"></img>
                   </button>
                 </form>
               </div>
@@ -254,7 +304,7 @@ export default class AdaptativeForm extends React.Component {
                 </div> */}
               <form> 
                 <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300 capitalize">
-                  Do you want to play ?
+                  {this.textTranslated[0]}
                 </div>
                 <div className="ml-10">
                     <div className="mb-2">
@@ -265,7 +315,7 @@ export default class AdaptativeForm extends React.Component {
                         onChange={this.handleChange}
                         checked={this.state.value === "yes"}
                       />
-                      <label htmlFor="yes" className="ml-2 capitalize text-lg text-c2 text-gray-700">Yes, Totally !</label>
+                      <label htmlFor="yes" className="ml-2 capitalize text-lg text-c2 text-gray-700">{this.textTranslated[1]}</label>
                     </div>
                     <div className="mb-2">
                       <input 
@@ -275,12 +325,11 @@ export default class AdaptativeForm extends React.Component {
                         onChange={this.handleChange}
                         checked={this.state.value === "no"}
                       />
-                      <label htmlFor="no" className="ml-2 capitalize text-lg text-c2 text-gray-700">Nah, Maybe another time !</label>
+                      <label htmlFor="no" className="ml-2 capitalize text-lg text-c2 text-gray-700">{this.textTranslated[2]}</label>
                     </div>
                 </div>
                 <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleFinalSubmit}>
-                  <span className="mr-2">Finish</span>
-                  <img width="18" height="18" src="../../assets/right-arrow.svg" className="ml-4 animate-bounce my-auto"></img>
+                  <img width="18" height="18" src="../../assets/check.svg" className="ml-4 animate-bounce my-auto"></img>
                 </button>
               </form>
             </div>
@@ -300,24 +349,24 @@ export default class AdaptativeForm extends React.Component {
                 <div className="mb-5 text-xl text-c2 text-gray-700 py-2 px-2 border-l-4 border-yellow-300">
                   {q.question}
                 </div>
-                {q.answers[0] !== 'open' && 
+                {q.answers[0] !== ' ' && 
                   <div className="ml-10">
                     {q.answers.map(answer => 
                       <div className="mb-2">
                         <input 
                           id={`${q.id}-${answer}`}
                           type="radio" 
-                          value={answer}
+                          value={q.answers.indexOf(answer)}
                           name={q.id}
                           onChange={this.handleChangeCompleting}
-                          checked={this.state[q.id] === answer}
+                          //checked={this.state[q.id] === answer}
                         />
                         <label htmlFor={`${q.id}-${answer}`} className="ml-2 capitalize text-lg text-c2 text-gray-700">{answer}</label>
                       </div>
                     )}
                   </div>
                 }
-                {q.answers[0] === 'open' && 
+                {q.answers[0] === ' ' && 
                   <div className="ml-10">
                     <input 
                       className="shadow appearance-none rounded py-2 px-3 text-grey-darker border border-yellow-300"
@@ -330,8 +379,7 @@ export default class AdaptativeForm extends React.Component {
               </div>
             )}
             <button className="float-right bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 inline-flex items-center" onClick={this.handleCompletingSubmit}>
-              <span className="mr-2">Submit</span>
-              {!this.isLoading && <img width="18" height="18" src="../../assets/right-arrow.svg" className="ml-4 animate-bounce my-auto"></img>}
+              {!this.isLoading && <img width="18" height="18" src="../../assets/check.svg" className="animate-bounce my-auto"></img>}
               {this.isLoading && <img width="18" height="18" src="../../assets/waiting.svg" className="ml-4 animate-spin my-auto"></img>}
             </button>
           </form>
