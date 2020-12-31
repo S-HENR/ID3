@@ -1,4 +1,4 @@
-const translatorHost = process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? "http://localhost:6001" : "https://translator.furio.team"
+const translatorHost = process.env.NODE_ENV === 'development' ? "http://localhost:6001" : "https://translator.furio.team"
 
 
 export const getTranslation = (data) => (
