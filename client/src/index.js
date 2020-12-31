@@ -34,7 +34,7 @@ class HomePage extends React.Component {
     "Credit"
   ]
 
-  handleChange = (event) => {
+  handleChange = async (event) => {
     this.setState({loading: true})
     await this.translateText(event.target.value)
     localStorage.setItem('preferredLang', event.target.value)
