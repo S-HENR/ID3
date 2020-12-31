@@ -8,6 +8,7 @@ import { getTranslation } from './services/translationService';
 import { LANGS } from './langs'
 
 import reportWebVitals from './reportWebVitals';
+import Loading from './components/loading';
 
 
 class HomePage extends React.Component {
@@ -17,7 +18,7 @@ class HomePage extends React.Component {
     if(!localStorage.getItem('preferredLang')) {
       localStorage.setItem('preferredLang', 'en')
     }
-    this.state = {targetLang: localStorage.getItem('preferredLang'), textTranslated: this.text}
+    this.state = {targetLang: localStorage.getItem('preferredLang'), textTranslated: this.text, loading:false}
     this.handleChange = this.handleChange.bind(this)
     this.translateText = this.translateText.bind(this)
     this.langs = LANGS
@@ -34,7 +35,8 @@ class HomePage extends React.Component {
   ]
 
   handleChange = (event) => {
-    this.translateText(event.target.value)
+    this.setState({loading: true})
+    await this.translateText(event.target.value)
     localStorage.setItem('preferredLang', event.target.value)
   }
 
@@ -45,6 +47,7 @@ class HomePage extends React.Component {
   async translateText(lang) {
     let result = []
     if(lang !== 'en') {
+      
       var data = {text: "", targetLanguage: lang, sourceLanguage: 'en'}
   
       for(let i = 0 ; i < this.text.length ; i++) {
@@ -59,38 +62,46 @@ class HomePage extends React.Component {
           result[i] = this.text[i]
         }
       }
-      this.setState({targetLang: lang, textTranslated: result })
+      this.setState({targetLang: lang, textTranslated: result, loading: false })
     }
     else {
-      this.setState({targetLang: lang, textTranslated: this.text })
+      this.setState({targetLang: lang, textTranslated: this.text, loading:false })
     }
   }
 
   render() {
+
+
     return(
       <div>
-        <div className="float-right">
-          <label>
-            {this.state.textTranslated[0]}
-            <select value={this.state.targetLang} onChange={this.handleChange}>
-              {this.langs.map(lang => 
-                <option value={lang.code}>{lang.name}</option>
-              )}
-            </select>
-          </label>
-        </div>
-        <br/>
-        <div className="text-center">
-          <h1 className="tracking-wide text-4xl text-gray-700">{this.state.textTranslated[1]}</h1>
-          <p className="mt-10 tracking-wide text-2xl text-justify text-gray-700">{this.state.textTranslated[2]}</p>
-          <p className="mt-5 tracking-wide text-xl text-justify text-gray-700">{this.state.textTranslated[3]}</p>
-          <button className="bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 mt-10 inline-flex items-center" onClick={start}>
-            <span className="mr-2">{this.state.textTranslated[4]}</span>
-          </button>
-          <div className="mt-10 text-sm font-thin">
-            {this.state.textTranslated[5]}: Victor Cavero - Seraphin Henry - Thomas Martin
+        {this.state.loading ? <Loading />:
+          <div>
+            <div className="float-right">
+              <label>
+                {this.state.textTranslated[0]}
+                <select value={this.state.targetLang} onChange={this.handleChange}>
+                  {this.langs.map(lang => 
+                    <option value={lang.code}>{lang.name}</option>
+                  )}
+                </select>
+              </label>
+            </div>
+            <br/>
+            <div className="text-center">
+              <h1 className="tracking-wide text-4xl text-gray-700">{this.state.textTranslated[1]}</h1>
+              <p className="mt-10 tracking-wide text-2xl text-justify text-gray-700">{this.state.textTranslated[2]}</p>
+              <p className="mt-5 tracking-wide text-xl text-justify text-gray-700">{this.state.textTranslated[3]}</p>
+              <button className="bg-white text-xl text-gray-800 font-bold rounded border-b-2 border-yellow-300 shadow-md py-2 px-6 mt-10 inline-flex items-center" onClick={start}>
+                <span className="mr-2">{this.state.textTranslated[4]}</span>
+              </button>
+              <div className="mt-10 text-sm font-thin">
+                {this.state.textTranslated[5]}: Victor Cavero - Seraphin Henry - Thomas Martin
+              </div>
+            </div>
+
           </div>
-        </div>
+        }
+
       </div>
     )
   }
