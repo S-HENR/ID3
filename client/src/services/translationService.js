@@ -1,5 +1,8 @@
+const translatorHost = process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? "http://localhost:6001" : "https://translator.furio.team"
+
+
 export const getTranslation = (data) => (
-    fetch('http://localhost:6001/', {
+    fetch(translatorHost+'/', {
       method: 'POST',
       headers: {
           Accept: 'application/json',
@@ -11,7 +14,7 @@ export const getTranslation = (data) => (
 );
 
 export const getFormTranslation = (data) => (
-    fetch('http://localhost:6001/form', {
+    fetch(translatorHost+'/form', {
       method: 'POST',
       headers: {
           Accept: 'application/json',

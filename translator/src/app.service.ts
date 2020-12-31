@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 
 import {Translate, TranslateTextRequest, TranslateClientConfig} from '@aws-sdk/client-translate';
 import { ConfigService } from '@nestjs/config';
@@ -8,15 +8,22 @@ import { TranslateFromEnResponse } from './models/TranslateFromEn.response';
 import { TranslateFormDTO } from './dto/translate-form.dto';
 import { QuestionAnswersForm } from './models/question-answers-form.model';
 import { sleep } from './utils/sleep';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class AppService {
   private prod = (process.env.NODE_ENV === "production");
 
-  constructor(private configService: ConfigService){}
+  constructor(private configService: ConfigService, @Inject(CACHE_MANAGER) private cacheManager: Cache){}
 
   async translate(translate: TranslateFromEnDTO): Promise<TranslateFromEnResponse>  {
+    // await this.cacheManager.reset();
 
+    const cachedAnswer = await this.cacheManager.get(JSON.stringify(translate));
+    if (cachedAnswer != undefined) {
+      console.log("Found in cache !")
+      return cachedAnswer;
+    }
 
     var conf = new AWSConfigCredentials(this.prod,this.configService);
 
@@ -42,12 +49,22 @@ export class AppService {
       originalText: translate.text
     }
 
+
+    await this.cacheManager.set(JSON.stringify(translate), resFinal, {ttl: 432000}); // 5 days caching
+    
+
     return resFinal
   }
 
 
 
   async translateForm(req: TranslateFormDTO): Promise<TranslateFormDTO> {
+
+    const cachedAnswer = await this.cacheManager.get(JSON.stringify(req));
+    if (cachedAnswer != undefined) {
+      console.log("Found in cache !")
+      return cachedAnswer;
+    }
 
     const res = await Promise.all(req.questionsAnswers.map(async (o: QuestionAnswersForm) => {
 
@@ -66,12 +83,17 @@ export class AppService {
       }
       await sleep(1000)
       return resF
-    }))
+    }));
 
-    return {
+    const finalAnswer = {
       targetLanguage: req.targetLanguage,
       questionsAnswers: res
     }
+
+   
+    await this.cacheManager.set(JSON.stringify(req), finalAnswer, {ttl: 432000}); // 5 days caching
+
+    return finalAnswer;
 
       
 

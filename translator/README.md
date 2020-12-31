@@ -3,6 +3,7 @@
 The purpose of this service is to provide  on-demand translation, using AWS translate.
 
 This can be used by the client to translate the whole form, or simply a single sentence.
+This app also uses a 5 days caching to prevent making identical requests to AWS.
 
 # Run it
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, CacheInterceptor, Controller, Get, Post, UseInterceptors } from '@nestjs/common';
 import { AppService } from './app.service';
 import { TranslateFromEnDTO as TranslateDTO } from './dto/translate-from-en.dto';
 import {TranslateFormDTO} from './dto/translate-form.dto'
@@ -16,7 +16,6 @@ export class AppController {
   @Post("/form")
   translateForm(@Body() translateFormDTO: TranslateFormDTO): Promise<TranslateFormDTO> {
     return this.appService.translateForm(translateFormDTO);
-
   }
 
 }
