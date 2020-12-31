@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+
+  pg-controller:
+    build: pg_controller/
+
+  translator:
+    build: translator/
+  
+  py-id3:
+    build: py-id3/
+
+  client:
+    build: client/
+
+  

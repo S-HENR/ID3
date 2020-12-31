@@ -5,14 +5,19 @@ services:
   postgres:
     environment: 
       POSTGRES_USER: admin
-      POSTGRES_DB_PASSWORD_FILE: /run/secrets/postgres_password_secret
+      POSTGRES_DB_PASSWORD_FILE: admin
 
   pg-controller:
     environment:
-      PROD: "true"
-    secrets:
-      - postgres_password_secret
-    
-secrets:
-  postgres_password_secret:
-    external: true
+      DATABASE_URL: postgres://admin:admin@postgres:5432
+
+  translator:
+    environment:
+      NODE_ENV: "staging"
+
+  client:
+    networks:
+     - front
+     - workers
+    ports:
+      - 80:80

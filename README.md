@@ -30,6 +30,9 @@ Here you can find the database model that the webApp uses : [(link)](DB_MODEL.md
 
 The apps runs at https://furio.team and has been deployed thanks to Docker and Docker Swarm.
 
+### Webapp dev mode
+
+Run : `docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up` and `cd client && yarn start`
 
 ### ID3 algorithm
 

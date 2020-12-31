@@ -3,9 +3,22 @@ version: "3.8"
 services:
 
   pg-controller:
+    image: golang
+    volumes:
+      - ./pg_controller:/go/src/pg_controller
+    working_dir: /go/src/pg_controller
+    command: go run main.go
     environment: 
       DATABASE_URL: postgres://admin:admin@postgres:5432
 
+  translator:
+    image: node:12.13-alpine
+    volumes:
+      - ./translator:/usr/src/app
+    working_dir: /usr/src/app
+    command: yarn start:dev
+    environment:
+      NODE_ENV: "staging"
 
   pgadmin:
     image: dpage/pgadmin4
@@ -17,6 +30,8 @@ services:
     networks:
       - db
       - front
+  py-id3:
+    build: py-id3/
 
   postgres:
     environment: 

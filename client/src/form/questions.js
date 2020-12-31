@@ -8,6 +8,6 @@ export const QUESTIONS = [
     {id: "day_night", question: "Is it day or night ?", answers: ['day', 'night']},
     {id: "localisation", question: "Would you play inside or outside ?", answers: ['inside', 'outside']},
     {id: "lights", question: "Is the place properly lit ?", answers: ['yes', 'no']},
-    {id: "inj_sick", question: "Are you injured or sick ?", answers: ['open']},
-    {id: "transport", question: "What means of transportation would you use ?", answers: ['open']}
+    {id: "inj_sick", question: "Are you injured or sick ?", answers: [' ']}, // <== ' ' means that the question is open
+    {id: "transport", question: "What means of transportation would you use ?", answers: [' ']}
 ]
