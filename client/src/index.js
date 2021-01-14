@@ -36,8 +36,9 @@ class HomePage extends React.Component {
 
   handleChange = async (event) => {
     this.setState({loading: true})
-    await this.translateText(event.target.value)
     localStorage.setItem('preferredLang', event.target.value)
+    await this.translateText(event.target.value)
+    
   }
 
   componentDidMount() {
